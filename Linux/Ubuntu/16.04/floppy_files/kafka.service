@@ -1,0 +1,11 @@
+[Unit]
+Description=Kafka service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/home/vagrant/auto-start-kafka.sh
+
+[Install]
+WantedBy=multi-user.target

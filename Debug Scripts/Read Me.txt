@@ -1,0 +1,3 @@
+here the stuff you need to turn on debugging for each system.
+
+Its not an actual .bat or .sh script yet but it could be if someone wanted to finish it

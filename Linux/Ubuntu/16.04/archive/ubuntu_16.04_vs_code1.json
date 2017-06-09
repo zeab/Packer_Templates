@@ -1,0 +1,30 @@
+{	
+	"_comment": "Build with `packer build -var-file=ubuntu_16.04_vs_code.json ubuntu_16.04_base.json`",
+	
+			"_comment": 								"General Settings",
+		"vm_version":									"0.0.0.1",
+		"vm_flavor":									"vs_codeNEW",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false",
+		
+		"_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"46080",
+		"cpus": 										"2",
+		"memory": 										"2048",
+		"vram":											"64",
+		
+		"_comment": 								"Virtualbox Settings",
+		"vbox_clipboard":								"bidirectional",
+		
+		"_comment":					 				"OS Settings",
+		"enable_desktop":								"true",
+		"update_system":								"true",
+		
+		"_comment": 								"Atlas Settings",
+		"atlas_token":									"OlbPSyEmEY4Pgg.atlasv1.8fBZEv7zGzg3eTddFsEW7LPhqtHUfOwyi7NNUc55YFlcoURkmC9KTZ8qcNJSAVr3CdU",
+		"atlas_username":								"zeab",
+		"atlas_artifact_type":							"virtualbox.image",
+		"atlas_provider":								"virtualbox.image",
+		"atlas_description":							"Test Descriptions of this"
+}

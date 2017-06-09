@@ -1,0 +1,42 @@
+#Gnome Extentions
+mkdir -p /home/vagrant/.local/share/gnome-shell/extensions/
+
+#set up ShellTiles
+git clone https://github.com/emasab/shelltile.git /tmp/shelltile/
+(cd /tmp/shelltile; ./build.sh)
+unzip /tmp/shelltile/ShellTile@emasab.it.zip -d ~/.local/share/gnome-shell/extensions/ShellTile@emasab.it/
+
+#Set up the desktop
+wget -O /tmp/dash-to-dock@micxgx.gmail.com.zip https://extensions.gnome.org/review/download/6696.shell-extension.zip
+unzip /tmp/dash-to-dock@micxgx.gmail.com.zip -d ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/
+
+#make all the files in extentions readable and writeable
+sudo chmod -R ugo+wrx /home/vagrant/.local/share/gnome-shell/extensions/
+
+#Configre Dash-to-dock
+dbus-launch dconf write /org/gnome/shell/extensions/dash-to-dock/dock-fixed "true"
+dbus-launch dconf write /org/gnome/shell/extensions/dash-to-dock/dock-position "'LEFT'"
+dbus-launch dconf write /org/gnome/shell/extensions/dash-to-dock/extend-height "true"
+dbus-launch dconf write /org/gnome/shell/extensions/dash-to-dock/show-apps-at-top "true"
+dbus-launch dconf write /org/gnome/shell/extensions/dash-to-dock/shortcut "['<Super>q']"
+
+#Enable gnome extensions
+dbus-launch dconf write /org/gnome/shell/enabled-extensions "['dash-to-dock@micxgx.gmail.com', 'ShellTile@emasab.it', 'workspace-indicator@gnome-shell-extensions.gcampax.github.com']"
+
+#Move the min,max and close icons for each window to the right like windows
+dbus-launch gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'
+
+#Configures icons on the launcher taskbar
+dbus-launch dconf write /org/gnome/shell/favorite-apps "['org.gnome.Nautilus.desktop', 'gnome-terminal.desktop', 'firefox.desktop', 'google-chrome.desktop', 'jetbrains-idea.ce.desktop', 'code.desktop']"
+
+#Enable Folders and stuff on the desktop
+dbus-launch gsettings set org.gnome.desktop.background show-desktop-icons true
+
+#Enable trash can on desktop
+dbus-launch gsettings set org.gnome.nautilus.desktop trash-icon-visible true
+
+#Disable Gnome animations
+dbus-launch gsettings set org.gnome.desktop.interface enable-animations false
+
+#Sets the scale factor
+dbus-launch dconf write /org/gnome/desktop/interface/text-scaling-factor "1.45"

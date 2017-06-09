@@ -1,0 +1,139 @@
+{
+	"_comment": "Build with `packer build win2016_server_base.json`",
+    "variables": 
+	{
+		"_comment": 						"General Settings",
+		"vm_version":							"0.1.0",
+		"vm_name":								"win2016",
+		"vm_flavor":							"base",
+						
+		"_comment": 						"Packer Settings",
+		"pack_headless": 						"false",
+		"shutdown_command": 					"shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+		"post_shutdown_delay":	 				"2m",
+					
+		"_comment": 						"Hypervisor Settings",
+		"disk_size": 							"35840",
+		"cpus": 								"2",
+		"memory": 								"2048",
+		"vram":									"32",
+		
+		"_comment": 						"Virtualbox Settings",
+		"vbox_guest_os_type": 					"Windows2012_64",
+		"vbox_guest_additions_mode":			"attach",
+		
+		"_comment": 						"OS Source Settings",
+		"iso_url": 								"",
+		"iso_version":							"",
+		"iso_alt_path": 						"./iso",
+		"iso_name":								"en_windows_server_2016_x64_dvd_9718492.iso",
+		"iso_checksum_type": 					"sha1",
+		"iso_checksum": 						"F185197AF68FAE4F0E06510A4579FC511BA27616",
+		
+		"_comment":			 				"OS Settings",
+		"os_host_name":							"Win2016",
+		"os_username": 							"vagrant",
+		"os_password": 							"vagrant",
+		
+		"_comment":			 				"OS Communication Settings",
+		"os_comm_type":							"winrm",
+		"os_comm_timeout":						"6h",
+		
+		"_comment": 						"Boot Commands/Settings",
+		"os_config_path":						"./os_config_files",
+		"os_config_file":						"autounattend.xml",
+		"floppy_files_path":					"./floppy_files",
+		"sftwre_install_script_path":			"./flavor",
+		"sftwre_install_file":					"install-software.ps1",
+		
+		"_comment": 						"Vagrant Settings",
+		"vgrt_output_path":						"./box",
+		"vgrtfile_template_path": 				"./vagrant_templates",
+		"vgrtfile_template_file":				"vagrantfile.template"
+	},
+    "builders": [
+        {
+            "type":                 			"virtualbox-iso",
+            "guest_os_type":        			"{{user `vbox_guest_os_type`}}",
+			"guest_additions_mode": 			"{{user `vbox_guest_additions_mode`}}",
+			
+			"headless":             			"{{user `pack_headless`}}",
+			"post_shutdown_delay" : 			"{{user `post_shutdown_delay`}}",
+			"shutdown_command": 				"{{user `shutdown_command`}}",
+			
+			"iso_urls": [
+				"{{ user `iso_alt_path` }}/{{ user `iso_name` }}",
+				"{{ user `iso_url` }}/{{user `iso_version`}}/{{user `iso_name`}}"
+			],
+            "iso_checksum_type":    			"{{user `iso_checksum_type`}}",
+            "iso_checksum":         			"{{user `iso_checksum`}}",
+			
+			"communicator":         			"{{user `os_comm_type`}}",
+            "winrm_username":       			"{{user `os_username`}}",
+            "winrm_password":       			"{{user `os_password`}}",
+            "winrm_timeout":        			"{{user `os_comm_timeout`}}",
+
+            "disk_size":            "{{user `disk_size`}}",
+			"vboxmanage": [
+                ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+                ["modifyvm", "{{.Name}}", "--cpus",      "{{user `cpus`}}"],
+                ["modifyvm", "{{.Name}}", "--vram",     "{{user `vram`}}"]
+			],
+			
+            "floppy_files": [
+			    "{{user `os_config_path`}}/{{user `os_config_file`}}",
+                "{{user `floppy_files_path`}}/*.*",
+				"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/*.*"
+			]
+        }
+    ],	
+    "provisioners": [
+	{
+		"type": "powershell",
+		"scripts": "{{user `floppy_files_path`}}/install-virtualbox-guest-additions.ps1",
+		"only": ["virtualbox-iso"]
+    },
+	{
+		"type": "windows-restart"
+	},
+	{
+		"type": "powershell",
+		"scripts": [
+				"{{user `floppy_files_path`}}/install-chocolatey.ps1",
+				"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/install-software.ps1"
+		]
+    },
+	{
+		"type": "windows-restart"
+	},
+	{
+		"type": "powershell",
+		"scripts": [
+				"{{user `floppy_files_path`}}/disable-windows-features.ps1",
+				"{{user `floppy_files_path`}}/uninstall-windows-software.ps1",
+				"{{user `floppy_files_path`}}/disable-password-expiration.ps1",
+				"{{user `floppy_files_path`}}/disable-hibernate.ps1",
+	  			"{{user `floppy_files_path`}}/disable-autologin.ps1",
+				"{{user `floppy_files_path`}}/enable-rdp.ps1",
+				"{{user `floppy_files_path`}}/enable-uac.ps1"
+		]
+    },
+	{
+		"type": "windows-restart"
+	},
+	{
+		"type": "powershell",
+		"scripts": [
+				"{{user `floppy_files_path`}}/finalize-compact.ps1"
+		]
+    }
+	],
+	"post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "{{user `vgrt_output_path`}}/{{.Provider}}_{{user `vm_name`}}_{{user `vm_flavor`}}.box",
+      "vagrantfile_template": "{{user `vgrtfile_template_path`}}/{{user `vgrtfile_template_file`}}"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+Firefox
+	run to accept defualts
+
+Variety
+	run to accept defualts
+	set background to change 1 a day
+
+Chrome
+	run to accept defualts and allow to run without password
+	Install Chrome DHC rest client extention
+	Close and run again to get rid of the not defualt brower window
+
+Multiload Indicator
+	indiactor-multiload
+	Change to traditional <- need to figure out why that keeps failing
+
+Intellij
+	Scala plugin
+	dark scheme
+	dont auto open programs
+
+Visual Studio Code
+	run to disable browser from opening
+
+enable firewall
+	sudo ufw enable
+
+TODO
+
+remove amazon stuff THE IP'S?
+
+Apply the unity template (or do I have to do that afterwards when the profile is set up anyways?...) I have to do this after for sure since i wipe login data

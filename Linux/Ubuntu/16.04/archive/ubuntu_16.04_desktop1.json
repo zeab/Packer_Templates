@@ -1,0 +1,53 @@
+{	
+	"_comment": "Build with `packer build -var-file=ubuntu_16.04_desktop.json ubuntu_16.04_base.json`",
+	
+		"_comment": 								"General Settings",
+		"vm_version":									"0.0.0.1",
+		"vm_name":										"ubuntu_16.04",
+		"vm_flavor":									"desktop",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false",
+		
+		"_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"50000",
+		"cpus": 										"2",
+		"memory": 										"2048",
+		"vram":											"72",
+		
+		"_comment": 								"Virtualbox Settings",
+		"vbox_clipboard":								"bidirectional",
+		
+		"_comment":					 				"OS Settings",
+		"enable_desktop":								"true",
+		"update_system":								"false",
+		
+		"_comment": 								"Atlas Settings",
+		"atlas_token":									"",
+		"atlas_username":								"",
+		"atlas_artifact_type":							"",
+		"atlas_provider":								"",
+		"atlas_description":							"",
+		
+		"_comment": 								"AWS Settings",
+		"aws_access_key":								"",
+		"aws_secret_key":								"",
+		"aws_region":									"",
+		"aws_s3_bucket_name":							"",
+
+		"_comment": 								"Azure ARM Settings",
+		"azure_client_id":								"",
+		"azure_client_sectet":							"",
+		"azure_resource_group_name":					"",
+		"azure_storage_account":						"",
+		"azure_tenant_id":								"",
+		"azure_capture_container_name":					"",
+		"azure_capture_name_prefix":					"",
+		"azure_os_type":								"",
+		"azure_image_publisher":						"",
+		"azure_image_offer":							"",
+		"azure_image_sku":								"",
+		"azure_location":								"",
+		"azure_vm_size":								"",
+		"azure_tag":									""	
+}

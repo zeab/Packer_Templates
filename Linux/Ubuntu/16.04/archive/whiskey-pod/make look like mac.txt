@@ -1,0 +1,7 @@
+sudo apt update
+sudo apt install ubuntu-gnome-desktop
+
+
+find the latest kube-config file from the downloads folder based on date
+delete the current kube config file from .kube
+move the downloaded file from downloads to .kube and rename the file to just config

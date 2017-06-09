@@ -1,0 +1,16 @@
+{	
+	"_comment": "Build with `packer build -var-file=win-2016-64x-whiskey-pod.json win-2016-64x-base.json`",
+	
+		"_comment": 								"General Settings",
+		"vm_version":									"0.0.0.1",
+		"vm_flavor":									"whiskey-pod",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false",
+		
+		"_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"46080",
+		"cpus": 										"2",
+		"memory": 										"4048",
+		"vram":											"128"		
+}

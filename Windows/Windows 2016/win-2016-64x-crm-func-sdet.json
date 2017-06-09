@@ -1,0 +1,16 @@
+{	
+	"_comment": "Build with `packer build -var-file=win-2016-64x-crm-func-sdet.json win-2016-64x-base.json`",
+	
+		"_comment": 								"General Settings",
+		"vm_version":									"0.0.0.1",
+		"vm_flavor":									"crm-func-sdet",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false",
+		
+		"_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"46080",
+		"cpus": 										"2",
+		"memory": 										"3072",
+		"vram":											"64"		
+}

@@ -1,0 +1,11 @@
+{
+	"_comment": 						"Build with `packer build -var-file=win10_crm_sdet.json win10_base.json`",
+		
+	"_comment": 						"General Settings",
+	"vm_version":							"0.1.0",
+	"vm_flavor":							"crm_sdet",
+						
+					
+	"_comment": 						"Hypervisor Settings",
+	"disk_size": 							"41160"
+}

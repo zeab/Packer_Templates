@@ -1,0 +1,54 @@
+{
+	"_comment": "Build with `packer build -var-file=ubuntu_16.04_docker.json ubuntu_16.04_base.json`",
+		
+		"_comment": 					"general settings",
+		"vm_version":					"0.1.0",
+		"vm_name":						"ubuntu_16.04_",
+		"vm_flavor":					"docker",
+						
+		"_comment": 					"packer settings",
+		"pack_headless": 				"false",
+		
+		"_comment": 					"virtual machine settings",
+		"disk_size": 					"35840",
+		"cpus": 						"2",
+		"memory": 						"2048",
+		
+		"_comment": 					"hypervisor settings",
+		"virtualbox_guest_os_type": 	"Ubuntu_64",
+		
+		"_comment": 					"os source settings",
+		"iso_url": 						"http://releases.ubuntu.com",
+		"iso_version":					"xenial",
+		"iso_name":						"ubuntu-16.04.2-server-amd64.iso",
+		"iso_alt_path": 				"./iso",
+		"iso_checksum_type": 			"sha1",
+		"iso_checksum": 				"f529548fa7468f2d8413b8427d8e383b830df5f6",
+		
+		"_comment":			 			"os settings",
+		"os_name": 						"vagrant",
+		"ssh_fullname": 				"vagrant",
+		"ssh_password": 				"vagrant",
+		"ssh_username": 				"vagrant",
+		"update": 						"false",
+		"desktop": 						"false",
+		
+		"_comment": 					"boot commands",
+		"os_config_path":				"./os_config_files",
+		"os_config_file":				"preseed.cfg",
+		"floppy_files_path":			"./floppy_files",
+		"sftwre_install_script_path":	"./flavor",
+		"sftwre_install_file":			"install-software.sh",
+		
+		"locale": 						"en_US",
+		"boot_command_prefix": 			"<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		
+		"_comment": 					"post processing settings",
+		"box_output_path":				"./box",
+		
+		"vagrantfile_template_path": 	"",
+		"vagrantfile_template_file":	"",
+		
+		"atlas_user":					"",
+		"atlas_token":					"Ov2AFK2EzQzRbQ.atlasv1.L5jyr9XaSuAOGjCnr6zCzYBOwtqjN1kcflv8vJaCWCe9k6N3ZlGyTvQyyss6zzJKwbI"
+}
