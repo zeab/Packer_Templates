@@ -1,5 +1,6 @@
 Firefox
 	run to accept defualts
+	set google as defualt search?
 
 Variety
 	run to accept defualts
@@ -30,3 +31,8 @@ TODO
 remove amazon stuff THE IP'S?
 
 Apply the unity template (or do I have to do that afterwards when the profile is set up anyways?...) I have to do this after for sure since i wipe login data
+
+isntall kafka (for producer and concumor tools)
+install fly
+
+harden more
