@@ -1,0 +1,11 @@
+[Unit]
+Description=Concourse service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/home/vagrant/auto-start-concourse.sh
+
+[Install]
+WantedBy=multi-user.target

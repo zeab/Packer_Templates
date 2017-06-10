@@ -15,6 +15,9 @@ echo "Fixing terminal issues"
 sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
 sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
 
+#set up 2nd network card
+printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
+
 
 #Hardening
 #Install Firewall
@@ -33,11 +36,9 @@ sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" 
 sudo apt-get install -y httpie 
 				
 #Installing Docker
-sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
-sudo apt-get update
-sudo apt-cache policy docker-engine
-sudo apt-get install -y docker-engine
+sudo apt-get install -y docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
 
 #Install docker compose
 sudo apt install -y docker-compose
@@ -56,31 +57,15 @@ apt-get install -y oracle-java8-installer
 #########
 
 
+#Pull the jFrog OSS image
+sudo docker pull docker.bintray.io/jfrog/artifactory-oss:latest
+sudo docker run --name artifactory -d -p 8081:8081 docker.bintray.io/jfrog/artifactory-oss:latest
 
+mv -v /tmp/artifactory.service /etc/systemd/system/artifactory.service
+sudo chmod 664 /etc/systemd/system/artifactory.service
 
-#Pull the spotify image
-sudo docker pull spotify/kafka
+sudo systemctl enable artifactory.service
 
-#set up 2nd network card
-printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
-
-
-#move the auto start shell file
-mv -v /tmp/auto-start-kafka.sh /home/vagrant/
-chmod +x /home/vagrant/auto-start-kafka.sh
-
-
-#move the kafka upstart file
-mv -v /tmp/kafka.service /etc/systemd/system/kafka.service
-sudo chmod 664 /etc/systemd/system/kafka.service
-
-sudo systemctl enable kafka.service
-
-
-#sudo docker run --restart=always -d spo
-#docker run -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=`docker-machine ip \`docker-machine active\`` --env ADVERTISED_PORT=9092 spotify/kafka
-
-#Need to enable docker to auto-start
 
 #final updates
 sudo apt update && sudo apt upgrade -y

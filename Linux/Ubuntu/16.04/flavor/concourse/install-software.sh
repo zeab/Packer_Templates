@@ -1,4 +1,7 @@
 
+#ENABLE 2nd lan card
+
+
 #REMOVE SOFTWARE
 #telnet since why would we need that?
 sudo apt-get purge -y --auto-remove telnet
@@ -11,6 +14,9 @@ sudo apt-get autoremove
 echo "Fixing terminal issues"
 sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
 sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
+
+#set up 2nd network card
+printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
 
 
 #Hardening
@@ -30,12 +36,6 @@ sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" 
 sudo apt-get install -y httpie 
 				
 #Installing Docker
-#sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-#sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
-#sudo apt-get update
-#sudo apt-cache policy docker-engine
-#sudo apt-get install -y docker-engine
-
 sudo apt-get install -y docker.io
 sudo systemctl start docker
 sudo systemctl enable docker
@@ -43,8 +43,31 @@ sudo systemctl enable docker
 #Install docker compose
 sudo apt install -y docker-compose
 
-#set up 2nd network card
-printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
+#Set up all the nessessary keys
+sudo mkdir -p keys/web keys/worker
+
+sudo ssh-keygen -t rsa -f ./keys/web/tsa_host_key -N ''
+sudo ssh-keygen -t rsa -f ./keys/web/session_signing_key -N ''
+
+sudo ssh-keygen -t rsa -f ./keys/worker/worker_key -N ''
+
+sudo cp ./keys/worker/worker_key.pub ./keys/web/authorized_worker_keys
+sudo cp ./keys/web/tsa_host_key.pub ./keys/worker
+
+
+#move the docker-compose file to the location
+mv -v /tmp/concourse-docker-compose.yml /home/vagrant/docker-compose.yml
+
+#move the auto start shell file
+mv -v /tmp/auto-start-concourse.sh /home/vagrant/
+chmod +x /home/vagrant/auto-start-concourse.sh
+
+#move the kafka upstart file
+mv -v /tmp/concourse.service /etc/systemd/system/concourse.service
+sudo chmod 664 /etc/systemd/system/concourse.service
+
+sudo systemctl enable concourse.service
+
 
 #final updates
 sudo apt update && sudo apt upgrade -y

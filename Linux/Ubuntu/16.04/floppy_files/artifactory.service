@@ -1,0 +1,11 @@
+[Unit]
+Description=Artifactory service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start artifactory
+
+[Install]
+WantedBy=multi-user.target
