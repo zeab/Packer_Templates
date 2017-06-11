@@ -1,19 +1,16 @@
 Firefox
 	run to accept defualts
-	set google as defualt search?
 
 Variety
 	run to accept defualts
 	set background to change 1 a day
+	set to change on start up
+	change back to dont change on start up
 
 Chrome
 	run to accept defualts and allow to run without password
 	Install Chrome DHC rest client extention
 	Close and run again to get rid of the not defualt brower window
-
-Multiload Indicator
-	indiactor-multiload
-	Change to traditional <- need to figure out why that keeps failing
 
 Intellij
 	Scala plugin
@@ -22,6 +19,13 @@ Intellij
 
 Visual Studio Code
 	run to disable browser from opening
+
+Multiload Indicator
+	indiactor-multiload
+	Change to traditional <- need to figure out why that keeps failing
+	snag the auto start
+		then let variatey run
+		move it back
 
 enable firewall
 	sudo ufw enable

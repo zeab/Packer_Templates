@@ -77,20 +77,6 @@ sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fs
 sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
 
 
-#create auto start folder for variety
-#sudo chown "vagrant":"vagrant" -R /home/vagrant/.config
-sudo rm -r /home/vagrant/.config/autostart
-mkdir /home/vagrant/.config/autostart
-
-#Instll variety
-sudo apt-get update
-sudo apt-get install -y variety
-
-#add the auto start to the dir
-printf '[Desktop Entry]\nName=Variety\nComment=Variety Wallpaper Changer\nIcon=variety\nExec=variety\nTerminal=false\nType=Application\nX-GNOME-Autostart-Delay=20' > '/home/vagrant/.config/autostart/variety.desktop'
-sudo chmod ugo+wrx /home/vagrant/.config/autostart/variety.desktop
-
-
 #Install Httpie
 sudo apt-get install -y httpie 
 
@@ -117,6 +103,33 @@ sudo apt-get install -y compizconfig-settings-manager
 sudo apt-get update
 sudo apt-get install -y indicator-multiload
 #start the indicator
+#sudo dbus-launch indicator-multiload
+
+#install fly cli
+wget -O /tmp/fly https://github.com/concourse/concourse/releases/download/v3.1.1/fly_linux_amd64
+mkdir /usr/share/fly
+mv -v /tmp/fly /usr/share/fly/fly
+chmod +x /usr/share/fly/fly
+#add to paths
+#sudo printf "export PATH=/usr/share/fly" >> /home/vagrant/.profile
+
+
+#download kafka
+wget -O /tmp/kafka.tar.gz http://apache.cs.utah.edu/kafka/0.10.2.0/kafka_2.11-0.10.2.0.tgz
+#unzip from tmp to usr/share
+tar xfz /tmp/kafka.tar.gz -C /usr/share/
+#make new kafka dir
+mkdir /usr/share/kafka/
+#move the interior unziped folder to new versionless kafka 
+mv /usr/share/kafka_2.11-0.10.2.0/* /usr/share/kafka
+#remove the old folder
+rm -r /usr/share/kafka_2.11-0.10.2.0
+#give that folder excution rights
+sudo chmod -R +x /usr/share/kafka/bin
+#add to paths
+#sudo echo "export PATH=$PATH:/usr/share/kafka/bin" >> /home/vagrant/.profile
+
+sed -i 's,PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games",PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/share/fly:/usr/share/kafka/bin",g' /etc/environment
 
 
 ##INSTALL JAVA8 from an install file rather than have the code here
@@ -136,7 +149,7 @@ apt-get install -y oracle-java8-installer
 #########
 #########
 echo "Installing IntelliJ"
-wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.1.3.tar.gz &&
+wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.1.4.tar.gz &&
 mkdir /tmp/intellij/ &&
 tar xfz /tmp/intellij.tar.gz -C /tmp/intellij/ &&
 mkdir /usr/share/intellij/ &&
@@ -163,6 +176,18 @@ printf '[Desktop Entry]\n Version=1.0\n Type=Application\n Name=IntelliJ IDEA Co
 #/home/vagrant/.IdeaIC2017.1/config/options
 
 #########
+#Instll variety
+sudo apt-get update
+sudo apt-get install -y variety
+
+#create auto start folder for variety
+#sudo chown "vagrant":"vagrant" -R /home/vagrant/.config
+#sudo rm -r /home/vagrant/.config/autostart
+#mkdir /home/vagrant/.config/autostart
+
+#add the auto start to the dir
+printf '[Desktop Entry]\nName=Variety\nComment=Variety Wallpaper Changer\nIcon=variety\nExec=variety\nTerminal=false\nType=Application\nX-GNOME-Autostart-Delay=20' > '/home/vagrant/.config/autostart/variety.desktop'
+sudo chmod ugo+wrx /home/vagrant/.config/autostart/variety.desktop
 
 
 #Installing Docker
@@ -230,14 +255,14 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 #Install Azure CLI
 #https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
 #########
-sudo apt-get update && sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ wheezy main"
-sudo tee /etc/apt/sources.list.d/azure-cli.list
+#sudo apt-get update && sudo apt-get install -y libssl-dev libffi-dev python-dev build-essential
+#echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ wheezy main"
+#sudo tee /etc/apt/sources.list.d/azure-cli.list
 
-sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 417A0893
-sudo apt-get install -y apt-transport-https
-sudo apt-get update
-sudo apt-get install -y azure-cli
+#sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 417A0893
+#sudo apt-get install -y apt-transport-https
+#sudo apt-get update
+#sudo apt-get install -y azure-cli
 #########
 
 
