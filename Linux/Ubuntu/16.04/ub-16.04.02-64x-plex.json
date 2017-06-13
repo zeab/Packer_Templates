@@ -14,7 +14,7 @@
 		"pause_between":								"30s",
 		
 		"_comment":			 						"Hypervisor Settings",
-		"disk_size": 									"25600",
+		"disk_size": 									"76800",
 		"cpus": 										"2",
 		"memory": 										"2048",
 		"vram":											"64",
@@ -182,24 +182,6 @@
 														"{{user `floppy_files_path`}}/reboot.sh"
 				],
 			"pause_before": 							"30s"	
-		},
-		{
-			"type": 									"file",
-			"source": 									"{{user `floppy_files_path`}}/auto-start-concourse.sh",
-			"destination": 								"/tmp/auto-start-concourse.sh",
-			"pause_before": 							"60s"	
-		},
-		{
-			"type": 									"file",
-			"source": 									"{{user `floppy_files_path`}}/concourse.service",
-			"destination": 								"/tmp/concourse.service",
-			"pause_before": 							"60s"	
-		},
-		{
-			"type": 									"file",
-			"source": 									"{{user `floppy_files_path`}}/concourse-docker-compose.yml",
-			"destination": 								"/tmp/concourse-docker-compose.yml",
-			"pause_before": 							"60s"	
 		},
 		{
 			"type": 									"shell",

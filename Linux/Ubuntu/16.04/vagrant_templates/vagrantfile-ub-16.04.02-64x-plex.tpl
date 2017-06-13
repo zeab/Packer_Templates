@@ -5,8 +5,8 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider :virtualbox do |v, override|
         v.gui = false
-        v.customize ["modifyvm", :id, "--memory", 2048]
-        v.customize ["modifyvm", :id, "--cpus", 2]
+        v.customize ["modifyvm", :id, "--memory", 4096]
+        v.customize ["modifyvm", :id, "--cpus", 4]
         v.customize ["modifyvm", :id, "--vram", "8"]
         v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
 		v.customize ["modifyvm", :id, "--audio", "none"]

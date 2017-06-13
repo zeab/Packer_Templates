@@ -43,31 +43,11 @@ sudo systemctl enable docker
 #Install docker compose
 sudo apt install -y docker-compose
 
-#Set up all the nessessary keys
-sudo mkdir -p keys/web keys/worker
+sudo docker pull linuxserver/plex
 
-sudo ssh-keygen -t rsa -f ./keys/web/tsa_host_key -N ''
-sudo ssh-keygen -t rsa -f ./keys/web/session_signing_key -N ''
+sudo docker create --name=plex --restart=always --net=host linuxserver/plex
 
-sudo ssh-keygen -t rsa -f ./keys/worker/worker_key -N ''
-
-sudo cp ./keys/worker/worker_key.pub ./keys/web/authorized_worker_keys
-sudo cp ./keys/web/tsa_host_key.pub ./keys/worker
-
-
-#move the docker-compose file to the location
-mv -v /tmp/concourse-docker-compose.yml /home/vagrant/docker-compose.yml
-
-#move the auto start shell file
-mv -v /tmp/auto-start-concourse.sh /home/vagrant/
-chmod +x /home/vagrant/auto-start-concourse.sh
-
-#move the kafka upstart file
-mv -v /tmp/concourse.service /etc/systemd/system/concourse.service
-sudo chmod 664 /etc/systemd/system/concourse.service
-
-sudo systemctl enable concourse.service
-
+sudo docker start plex
 
 #final updates
 sudo apt update && sudo apt upgrade -y

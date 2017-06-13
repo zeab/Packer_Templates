@@ -3,7 +3,7 @@
 
 	"variables": {
 		"_comment": 								"General Settings",
-		"vm_version":									"1.0.0",
+		"vm_version":									"1.0.1",
 		"vm_name":										"ub-16.04.02-64x",
 		"vm_flavor":									"kafka",
 		

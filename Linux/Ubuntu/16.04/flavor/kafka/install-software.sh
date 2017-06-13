@@ -40,12 +40,18 @@ sudo systemctl enable docker
 #Install docker compose
 sudo apt install -y docker-compose
 
+
+#wget -O /tmp/docker-machine https://github.com/docker/machine/releases/download/v0.6.0/docker-machine-$(uname -s)-$(uname -m) 
+#sudo chmod +x /tmp/docker-machine
+#sudo mv /tmp/docker-machine /usr/local/bin
+
 #Pull the spotify image
 sudo docker pull spotify/kafka
 
 #set up 2nd network card
 printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
 
+#sudo docker run --restart=always -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=`docker-machine ip \`docker-machine active\`` --env ADVERTISED_PORT=9092 spotify/kafka
 
 #move the auto start shell file
 mv -v /tmp/auto-start-kafka.sh /home/vagrant/
