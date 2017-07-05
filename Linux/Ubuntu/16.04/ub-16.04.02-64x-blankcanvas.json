@@ -1,0 +1,229 @@
+{
+	"_comment": "Build with `packer build ub-16.04.02-64x-blankcanvas.json`",
+
+	"variables": {
+		"_comment": 								"General Settings",
+		"vm_version":									"1.0.0",
+		"vm_name":										"ub-16.04.02-64x",
+		"vm_flavor":									"blankcanvas",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false",
+		"shutdown_command": 							"sudo -S shutdown -P now",
+		"post_shutdown_delay":	 						"1m",
+		"pause_between":								"30s",
+		
+		"_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"25600",
+		"cpus": 										"2",
+		"memory": 										"2048",
+		"vram":											"64",
+		"nictype1":										"virtio",
+		"audio":										"none",
+		
+		"_comment": 								"Virtualbox Settings",
+		"vbox_guest_os_type": 							"Ubuntu_64",
+		"vbox_guest_additions_mode":					"upload",
+		"vbox_clipboard":								"bidirectional",
+
+		"_comment": 								"VMware Settings",
+		"vmware_guest_os_type":							"",
+		"vmware_guest_additions_mode":					"",
+		
+		"_comment": 								"Parallels Settings",
+		"parallels_guest_os_type":						"",
+		"parallels_guest_additions_mode":				"",
+		
+		"_comment": 								"Hyper-V Settings",
+		"hyperv_guest_os_type":							"",
+		"hyperv_guest_additions_mode":					"",
+		
+		"_comment": 								"OS Source Settings",
+		"iso_name":										"ubuntu-16.04.2-server-amd64.iso",
+		"iso_url": 										"http://releases.ubuntu.com",
+		"iso_flavor":									"xenial",
+		"iso_alt_path": 								"",
+		"iso_checksum_type": 							"sha1",
+		"iso_checksum": 								"f529548fa7468f2d8413b8427d8e383b830df5f6",
+		
+		"_comment":					 				"OS Settings",
+		"os_username": 									"vagrant",
+		"os_password": 									"vagrant",
+		"install_desktop":								"false",
+		"install_updates":								"false",
+		
+		"_comment":			 						"OS Communication Settings",
+		"os_comm_type":									"ssh",
+		"os_comm_timeout":								"6h",
+		
+		"_comment": 								"Boot Commands/Settings",
+		"os_config_path":								"./os_config_files",
+		"os_config_file":								"preseed.cfg",
+		"floppy_files_path":							"./floppy_files",
+		"sftwre_install_script_path":					"./flavor",
+		"sftwre_install_file":							"install-software.sh",
+
+		"_comment": 								"Vagrant Settings",
+		"configure_for_vagrant":						"true",
+		"vgrt_output_path":								"./.box",
+		"vgrt_compression":								"",
+		"vgrtfile_template_path": 						"./vagrant_templates/",
+		"vgrtfile_template_file":						"vagrantfile-ub-16.04.02-64x-docker.tpl",
+		
+		"_comment": 								"Atlas Settings",
+		"atlas_token":									"OlbPSyEmEY4Pgg.atlasv1.8fBZEv7zGzg3eTddFsEW7LPhqtHUfOwyi7NNUc55YFlcoURkmC9KTZ8qcNJSAVr3CdU",
+		"atlas_username":								"zeab",
+		"atlas_artifact_type":							"vagrant.box",
+		"atlas_provider1":								"virtualbox.image",
+		"atlas_provider2":								"",
+		"atlas_provider3":								"",
+		"atlas_description":							"This is a base image of Ubuntu 16.04.02 LTS Server with no frills",
+		
+		"_comment": 								"AWS Settings",
+		"aws_access_key":								"",
+		"aws_secret_key":								"",
+		"aws_region":									"",
+		"aws_s3_bucket_name":							"",
+
+		"_comment": 								"Azure ARM Settings",
+		"azure_client_id":								"",
+		"azure_client_sectet":							"",
+		"azure_resource_group_name":					"",
+		"azure_storage_account":						"",
+		"azure_tenant_id":								"",
+		"azure_capture_container_name":					"",
+		"azure_capture_name_prefix":					"",
+		"azure_os_type":								"",
+		"azure_image_publisher":						"",
+		"azure_image_offer":							"",
+		"azure_image_sku":								"",
+		"azure_location":								"",
+		"azure_vm_size":								"",
+		"azure_tag":									""
+		
+	},
+	"builders": [
+		{
+			"type":                 					"virtualbox-iso",
+			"guest_os_type":        					"{{user `vbox_guest_os_type`}}",
+			"guest_additions_mode": 					"{{user `vbox_guest_additions_mode`}}",
+	  
+			"disk_size":            					"{{user `disk_size`}}",
+			"vboxmanage": [
+														["modifyvm", "{{.Name}}", "--nictype1", 	"{{user `nictype1`}}"],
+														["modifyvm", "{{.Name}}", "--memory", 		"{{user `memory`}}"],
+														["modifyvm", "{{.Name}}", "--cpus",     	"{{user `cpus`}}"],
+														["modifyvm", "{{.Name}}", "--vram",     	"{{user `vram`}}"],
+														["modifyvm", "{{.Name}}", "--audio",     	"{{user `audio`}}"]
+				],
+			
+			"floppy_files": [
+														"{{user `os_config_path`}}/{{user `os_config_file`}}",
+														"{{user `floppy_files_path`}}/*.*",
+														"{{user `floppy_files_path`}}/installers/*.*",
+														"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/*.*"
+				],		
+			
+			"headless":             					"{{user `pack_headless`}}",
+			"shutdown_command": 						"echo '{{ user `os_password` }}'|{{user `shutdown_command`}}",
+			"post_shutdown_delay" : 					"{{user `post_shutdown_delay`}}",
+
+			"iso_urls": [
+														"{{ user `iso_alt_path` }}/{{ user `iso_name` }}",
+														"{{ user `iso_url` }}/{{user `iso_flavor`}}/{{user `iso_name`}}"
+				],
+			"iso_checksum_type":    					"{{user `iso_checksum_type`}}",
+			"iso_checksum":         					"{{user `iso_checksum`}}",
+		
+			"communicator":			         			"{{user `os_comm_type`}}",
+			"ssh_password": 			      			"{{user `os_username`}}",
+			"ssh_username":			       				"{{user `os_password`}}",
+			"ssh_wait_timeout": 			   			"{{user `os_comm_timeout`}}",
+			
+			"boot_command": [
+														"<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+														"/install/vmlinuz noapic ",
+														"initrd=/install/initrd.gz ",
+														"file=/floppy/{{ user `os_config_file` }} ",
+														"debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+														"hostname={{user `vm_flavor`}} ",
+														"grub-installer/bootdev=/dev/sda<wait> ",
+														"fb=false debconf/frontend=noninteractive ",
+														"keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ",
+														"keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+														"passwd/user-fullname={{ user `os_username` }} ",
+														"passwd/user-password={{ user `os_password` }} ",
+														"passwd/user-password-again={{ user `os_password` }} ",
+														"passwd/username={{ user `os_username` }} ",
+														"<enter>"
+				]
+		}
+	],
+	"provisioners": [
+		{
+			"only": 									["virtualbox-iso"],
+			"type": 									"shell",
+			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+			"scripts": 									"{{user `floppy_files_path`}}/install-virtualbox-tools.sh",
+			"pause_before": 							"30s"	
+		},
+		{
+			"type": 									"shell",
+			"environment_vars": [
+														"OS_USERNAME={{user `os_username`}}",
+														"OS_PASSWORD={{user `os_password`}}",
+														"INSTALL_DESKTOP={{user `install_desktop`}}",
+														"INSTALL_UPDATES={{user `install_updates`}}"
+				],
+			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+			"scripts": [
+														"{{user `floppy_files_path`}}/install-updates.sh",
+														"{{user `floppy_files_path`}}/install-desktop.sh",
+														"{{user `floppy_files_path`}}/reboot.sh"
+				],
+			"pause_before": 							"30s"	
+		},
+		{
+			"type": 									"file",
+			"source": 									"{{user `floppy_files_path`}}/unity.profile",
+			"destination": 								"/tmp/unity.profile",
+			"pause_before": 							"60s"	
+		},
+		{
+			"type": 									"shell",
+			"environment_vars": [
+														"OS_USERNAME={{user `os_username`}}",
+														"OS_PASSWORD={{user `os_password`}}"
+				],
+			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+			"scripts": [
+														"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/{{user `sftwre_install_file`}}",
+														"{{user `floppy_files_path`}}/reboot.sh"
+				],
+			"pause_before": 							"30s"	
+		},	
+		{
+			"type": 									"shell",
+			"environment_vars": [
+														"OS_USERNAME={{user `os_username`}}",
+														"OS_PASSWORD={{user `os_password`}}",
+														"CONFIGURE_FOR_VAGRANT={{user `configure_for_vagrant`}}"
+				],
+			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+			"scripts": [
+														"{{user `floppy_files_path`}}/configure-for-vagrant.sh",
+														"{{user `floppy_files_path`}}/finalize-compact.sh"
+				],
+			"pause_before": 							"30s"	
+		}
+		
+	],
+	"post-processors": [
+		{
+			"type": 									"vagrant",
+			"keep_input_artifact": 						false,
+			"output": 									"{{user `vgrt_output_path`}}/{{.Provider}}/{{user `vm_name`}}-{{user `vm_flavor`}}.box",
+			"vagrantfile_template": 					"{{user `vgrtfile_template_path`}}{{user `vgrtfile_template_file`}}"	
+		}
+	]
+}
