@@ -62,7 +62,7 @@ mv -v /tmp/concourse-docker-compose.yml /home/vagrant/docker-compose.yml
 mv -v /tmp/auto-start-concourse.sh /home/vagrant/
 chmod +x /home/vagrant/auto-start-concourse.sh
 
-#move the kafka upstart file
+#move the concourse upstart file
 mv -v /tmp/concourse.service /etc/systemd/system/concourse.service
 sudo chmod 664 /etc/systemd/system/concourse.service
 

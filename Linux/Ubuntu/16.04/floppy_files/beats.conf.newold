@@ -1,0 +1,33 @@
+input{
+  beats {
+   port => "5401"
+   codec => json
+  }
+  http {
+   port => 8900
+   threads => 512
+  }
+}
+
+filter {
+	if [type] == "perflog" {
+		date {
+		  match => ["currentTime", "yyyy-MM-dd-HH.mm.ss.SSS"]
+		  target => "@timestamp"
+		}
+	}
+	if [type] == "usergenlog" {
+		date {
+		  match => ["currentTime", "yyyy-MM-dd-HH.mm.ss.SSS"]
+		  target => "@timestamp"
+		}
+	}
+}
+
+output{
+ elasticsearch {
+  hosts => ["localhost:9200"]
+  index => "%{[@metadata][beat]}-%{+YYY.MM.dd}"
+  document_type => "%{[@metadata][type]}"
+ }
+}

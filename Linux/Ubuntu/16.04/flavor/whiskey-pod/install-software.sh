@@ -91,6 +91,20 @@ sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable
 sudo apt-get update 
 sudo apt-get install -y google-chrome-stable
 
+#########
+#Instll variety
+sudo apt-get update
+sudo apt-get install -y variety
+
+#create auto start folder for variety
+#sudo chown "vagrant":"vagrant" -R /home/vagrant/.config
+#sudo rm -r /home/vagrant/.config/autostart
+#mkdir /home/vagrant/.config/autostart
+
+#add the auto start to the dir
+printf '[Desktop Entry]\nName=Variety\nComment=Variety Wallpaper Changer\nIcon=variety\nExec=variety\nTerminal=false\nType=Application\nX-GNOME-Autostart-Delay=20' > '/home/vagrant/.config/autostart/variety.desktop'
+sudo chmod ugo+wrx /home/vagrant/.config/autostart/variety.desktop
+
 #Install dconf editor
 sudo apt-get update
 sudo apt-get install -y dconf-editor
@@ -106,7 +120,7 @@ sudo apt-get install -y indicator-multiload
 #sudo dbus-launch indicator-multiload
 
 #install fly cli
-wget -O /tmp/fly https://github.com/concourse/concourse/releases/download/v3.1.1/fly_linux_amd64
+wget -O /tmp/fly https://github.com/concourse/concourse/releases/download/v3.3.4/fly_linux_amd64
 mkdir /usr/share/fly
 mv -v /tmp/fly /usr/share/fly/fly
 chmod +x /usr/share/fly/fly
@@ -115,15 +129,15 @@ chmod +x /usr/share/fly/fly
 
 
 #download kafka
-wget -O /tmp/kafka.tar.gz http://apache.cs.utah.edu/kafka/0.10.2.0/kafka_2.11-0.10.2.0.tgz
+wget -O /tmp/kafka.tar.gz http://www-us.apache.org/dist/kafka/0.11.0.0/kafka_2.12-0.11.0.0.tgz
 #unzip from tmp to usr/share
 tar xfz /tmp/kafka.tar.gz -C /usr/share/
 #make new kafka dir
 mkdir /usr/share/kafka/
 #move the interior unziped folder to new versionless kafka 
-mv /usr/share/kafka_2.11-0.10.2.0/* /usr/share/kafka
+mv /usr/share/kafka*/* /usr/share/kafka
 #remove the old folder
-rm -r /usr/share/kafka_2.11-0.10.2.0
+rm -r /usr/share/kafka_2.12-0.11.0.0
 #give that folder excution rights
 sudo chmod -R +x /usr/share/kafka/bin
 #add to paths
@@ -149,14 +163,14 @@ apt-get install -y oracle-java8-installer
 #########
 #########
 echo "Installing IntelliJ"
-wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.1.4.tar.gz &&
+wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.2.1.tar.gz &&
 mkdir /tmp/intellij/ &&
 tar xfz /tmp/intellij.tar.gz -C /tmp/intellij/ &&
 mkdir /usr/share/intellij/ &&
 mv -v /tmp/intellij/idea*/* /usr/share/intellij/
 
 #Move the profile onto the desktop
-mv -v /tmp/intellij-scala-settings.jar /home/${OS_USERNAME}/Desktop/
+#mv -v /tmp/intellij-scala-settings.jar /home/${OS_USERNAME}/Desktop/
 
 #Grant rights to the files for updating purposes
 echo "Granting access to the folder and subfolders so IntelliJ can be auto updated"
@@ -175,20 +189,6 @@ printf '[Desktop Entry]\n Version=1.0\n Type=Application\n Name=IntelliJ IDEA Co
 #/home/vagrant/.IdeaIC2017.1/config/options
 #/home/vagrant/.IdeaIC2017.1/config/options
 
-#########
-#Instll variety
-sudo apt-get update
-sudo apt-get install -y variety
-
-#create auto start folder for variety
-#sudo chown "vagrant":"vagrant" -R /home/vagrant/.config
-#sudo rm -r /home/vagrant/.config/autostart
-#mkdir /home/vagrant/.config/autostart
-
-#add the auto start to the dir
-printf '[Desktop Entry]\nName=Variety\nComment=Variety Wallpaper Changer\nIcon=variety\nExec=variety\nTerminal=false\nType=Application\nX-GNOME-Autostart-Delay=20' > '/home/vagrant/.config/autostart/variety.desktop'
-sudo chmod ugo+wrx /home/vagrant/.config/autostart/variety.desktop
-
 
 #Installing Docker
 #########
@@ -203,38 +203,68 @@ echo "Setting Docker so you dont have to sudo every time"
 sudo usermod -aG docker ${OS_USERNAME}
 #########
 
+####Enable Atom
+#wget -O /tmp/atom.deb https://github.com/atom/atom/releases/download/v1.19.0/atom-amd64.deb
+#sudo dpkg --install atom.deb
+sudo apt update
+sudo add-apt-repository ppa:webupd8team/atom -y
+sudo apt update
+sudo apt install -y atom
+sudo xdg-mime default atom.desktop text/plain
+
 #Visual Studio Code - Install
 #########
 #########
-echo "Installing VS Code"
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-sudo sh -c 'echo "deb [arch=amd64] http://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-sudo apt-get update
-sudo apt-get -y install code
+#echo "Installing VS Code"
+#wget -O /tmp/code.deb https://go.microsoft.com/fwlink/?LinkID=760868
+#sudo dpkg -i /tmp/code.deb
+#sudo apt-get install -f
+#curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+#sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+#sudo sh -c 'echo "deb [arch=amd64] http://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+#sudo apt-get update
+#sudo apt-get -y install code
 #########
 
 #Visual Studio Code - Extentions
 #########
 #Running it under the vagrant user so that it stop complaining
-echo "Installing VS Code Extentions"
-sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension donjayamanne.python'
-sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension PeterJausovec.vscode-docker'
-sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension georgewfraser.vscode-javac'
-sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension DotJoshJohnson.xml'
+#echo "Installing VS Code Extentions"
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension donjayamanne.python'
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension PeterJausovec.vscode-docker'
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension georgewfraser.vscode-javac'
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension DotJoshJohnson.xml'
 #########
 
 #Visual Studio Code - Fix Lancher
 #########
-echo "Fixing the VS Code Launcher Icon"
-sed -i "s,Exec=/usr/share/code/code --unity-launch %U,Exec=/usr/share/code/code --disable-gpu --unity-launch %U,g" /usr/share/applications/code.desktop
+#echo "Fixing the VS Code Launcher Icon"
+#sed -i "s,Exec=/usr/share/code/code --unity-launch %U,Exec=/usr/share/code/code --disable-gpu --unity-launch %U,g" /usr/share/applications/code.desktop
 
 #Make it the defualt editor
-echo "Updating VS Code to be the defualt text editor"
-sudo xdg-mime default code.desktop text/plain
+#echo "Updating VS Code to be the defualt text editor"
+#sudo xdg-mime default atom.desktop text/plain
+
+#enable python
+#rm /home/vagrant/.config/Code/User/settings.json
+#printf '{\n "python.pythonPath": "/usr/bin/python3" \n}' > /home/vagrant/.config/Code/User/settings.json
 #########
 #########
 
+
+#download visualvm and place it in a location for easy access
+wget -O /tmp/visualvm.zip https://github.com/visualvm/visualvm.src/releases/download/1.3.9/visualvm_139.zip
+mkdir /tmp/visualvm/
+unzip /tmp/visualvm.zip -d /tmp/visualvm/
+sudo mkdir /usr/share/visualvm/
+sudo mv -v /tmp/visualvm/visualvm*/* /usr/share/visualvm/
+chmod +x /usr/share/visualvm/bin/./visualvm
+sudo printf '[Desktop Entry]\nName=VisualVM\nComment=All-in-One Java Troubleshooting Tool\nKeywords=java;jvm;profiler;monitoring\nExec=/usr/share/visualvm/bin/visualvm\nIcon=/usr/share/visualvm/etc/visualvm.icns\nCategories=Development;Java;\nTerminal=false\nType=Application' > '/usr/share/applications/visualvm.desktop'
+
+
+
+#sudo apt-get update
+#sudo apt-get install -y visualvm
 
 
 #Install Kubectl
@@ -301,7 +331,9 @@ sudo apt-get install -y sqlite3
 
 #Set Desktop Icons
 echo "Setting Launcher Icons"
-dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://gnome-terminal.desktop', 'application://jetbrains-idea.ce.desktop', 'application://code.desktop']"
+dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://gnome-terminal.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
+#'application://code.desktop',
+
 
 #Sets the buttons on the right and correct widnows (So the ubuntu desktop people are dick's and decided everyone should have the buttons in the same place the same way so there is no option to change it)
 #dbus-launch gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'

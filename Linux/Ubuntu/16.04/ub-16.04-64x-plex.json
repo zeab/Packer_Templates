@@ -1,11 +1,11 @@
 {
-	"_comment": "Build with `packer build ub-16.04.02-64x-elk.json`",
+	"_comment": "Build with `packer build ub-16.04-64x-plex.json`",
 
 	"variables": {
 		"_comment": 								"General Settings",
 		"vm_version":									"1.0.0",
-		"vm_name":										"ub-16.04.02-64x",
-		"vm_flavor":									"elk",
+		"vm_name":										"ub-16.04-64x",
+		"vm_flavor":									"plex",
 		
 		"_comment": 								"Packer Settings",
 		"pack_headless": 								"false",
@@ -14,7 +14,7 @@
 		"pause_between":								"30s",
 		
 		"_comment":			 						"Hypervisor Settings",
-		"disk_size": 									"25600",
+		"disk_size": 									"76800",
 		"cpus": 										"2",
 		"memory": 										"2048",
 		"vram":											"64",
@@ -39,12 +39,12 @@
 		"hyperv_guest_additions_mode":					"",
 		
 		"_comment": 								"OS Source Settings",
-		"iso_name":										"ubuntu-16.04.2-server-amd64.iso",
+		"iso_name":										"ubuntu-16.04.3-server-amd64.iso",
 		"iso_url": 										"http://releases.ubuntu.com",
 		"iso_flavor":									"xenial",
 		"iso_alt_path": 								"",
 		"iso_checksum_type": 							"sha1",
-		"iso_checksum": 								"f529548fa7468f2d8413b8427d8e383b830df5f6",
+		"iso_checksum": 								"f3532991e031cae75bcf5e695afb844dd278fff9",
 		
 		"_comment":					 				"OS Settings",
 		"os_username": 									"vagrant",
@@ -68,7 +68,7 @@
 		"vgrt_output_path":								"./.box",
 		"vgrt_compression":								"",
 		"vgrtfile_template_path": 						"./vagrant_templates/",
-		"vgrtfile_template_file":						"vagrantfile-ub-16.04.02-64x-docker.tpl",
+		"vgrtfile_template_file":						"vagrantfile-ub-16.04.02-64x-concourse.tpl",
 		
 		"_comment": 								"Atlas Settings",
 		"atlas_token":									"OlbPSyEmEY4Pgg.atlasv1.8fBZEv7zGzg3eTddFsEW7LPhqtHUfOwyi7NNUc55YFlcoURkmC9KTZ8qcNJSAVr3CdU",
@@ -184,12 +184,6 @@
 			"pause_before": 							"30s"	
 		},
 		{
-			"type": 									"file",
-			"source": 									"{{user `floppy_files_path`}}/beats.conf",
-			"destination": 								"/tmp/beats.conf",
-			"pause_before": 							"60s"	
-		},
-		{
 			"type": 									"shell",
 			"environment_vars": [
 														"OS_USERNAME={{user `os_username`}}",
@@ -216,7 +210,6 @@
 				],
 			"pause_before": 							"30s"	
 		}
-		
 	],
 	"post-processors": [
 		{

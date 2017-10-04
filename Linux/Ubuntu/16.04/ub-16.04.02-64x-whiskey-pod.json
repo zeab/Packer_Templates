@@ -3,8 +3,8 @@
 
 	"variables": {
 		"_comment": 								"General Settings",
-		"vm_version":									"1.0.5",
-		"vm_name":										"ub-16.04.02-64x",
+		"vm_version":									"1.0.7",
+		"vm_name":										"ub-16.04-64x",
 		"vm_flavor":									"whiskey-pod",
 		
 		"_comment": 								"Packer Settings",
@@ -39,12 +39,12 @@
 		"hyperv_guest_additions_mode":					"",
 		
 		"_comment": 								"OS Source Settings",
-		"iso_name":										"ubuntu-16.04.2-server-amd64.iso",
+		"iso_name":										"ubuntu-16.04.3-server-amd64.iso",
 		"iso_url": 										"http://releases.ubuntu.com",
 		"iso_flavor":									"xenial",
 		"iso_alt_path": 								"",
 		"iso_checksum_type": 							"sha1",
-		"iso_checksum": 								"f529548fa7468f2d8413b8427d8e383b830df5f6",
+		"iso_checksum": 								"f3532991e031cae75bcf5e695afb844dd278fff9",
 		
 		"_comment":					 				"OS Settings",
 		"os_username": 									"vagrant",

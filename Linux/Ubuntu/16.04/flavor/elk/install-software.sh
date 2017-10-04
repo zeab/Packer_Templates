@@ -25,9 +25,12 @@ sudo ufw allow http
 #sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
 #sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
 
+#Install Htop
+sudo apt-get update && sudo apt install htop
+
 #INSTALL SOFTWARE
 #Install Httpie
-sudo apt-get install -y httpie 
+sudo apt-get update && sudo apt-get install -y httpie 
 				
 #Installing Docker
 #sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -41,7 +44,7 @@ sudo systemctl start docker
 sudo systemctl enable docker
 
 #Install docker compose
-sudo apt install -y docker-compose
+sudo apt-get update && sudo apt install -y docker-compose
 
 
 ##INSTALL JAVA8 from an install file rather than have the code here
@@ -57,10 +60,13 @@ apt-get install -y oracle-java8-installer
 #########
 
 
+##Add elasticsearch items to the apt-get repo
+sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+sudo echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
+
 
 #Install Elasticsearch
-wget -O /tmp/elasticsearch.deb https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.0.deb
-sudo dpkg -i /tmp/elasticsearch.deb
+sudo apt-get update && sudo apt-get install -y elasticsearch
 ##MODIFY CONFIG FILE HERE
 #ClusterName
 sudo sed -i 's,#cluster.name: my-application,cluster.name: whiskey-monitoring,g' /etc/elasticsearch/elasticsearch.yml
@@ -68,24 +74,28 @@ sudo sed -i 's,#cluster.name: my-application,cluster.name: whiskey-monitoring,g'
 sudo sed -i 's,#node.name: node-1,node.name: whiskey-es,g' /etc/elasticsearch/elasticsearch.yml
 #NetworkIp
 sudo sed -i 's,#network.host: 192.168.0.1,network.host: 0.0.0.0,g' /etc/elasticsearch/elasticsearch.yml
+#up the max map count so it doesnt die
 sudo echo "vm.max_map_count = 262144" | tee -a /etc/sysctl.conf
+#start and set to start on set up
 sudo service elasticsearch start
 sudo systemctl enable elasticsearch 
 
 
 #Logstash
-sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-sudo echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
 sudo apt-get update && sudo apt-get install -y logstash
 #update ip address to a way to grab it on the fly
 
 #I think i need to send in a json instead...?
 #sudo /usr/share/logstash/bin/logstash -e 'input { stdin { } } output { elasticsearch { hosts => ["localhost"] } }' --path.data /root/data
-
+#sudo /usr/share/logstash/bin/logstash -e 'input {http {port => 8900}} output {stdout{codec => rubydebug}}'
 sudo mv /tmp/beats.conf /etc/logstash/conf.d/beats.conf
+sudo mv /tmp/http.conf /etc/logstash/conf.d/http.conf
 
 sudo systemctl enable logstash
 sudo service logstash start
+
+
+#add a curl command about firing a logstash in at this point
 
 
 #Kibana
@@ -108,52 +118,60 @@ sudo systemctl enable kibana
 #sudo echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
 #sudo apt-get update && sudo apt-get install -y metricbeat
 
-sudo curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-5.5.0-amd64.deb
-sudo dpkg -i metricbeat-5.5.0-amd64.deb
+#sudo curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-5.5.0-amd64.deb
+#sudo dpkg -i metricbeat-5.5.0-amd64.deb
 
 #ADD STUFF TO CHANGE THE TAGS AND FIELDS
 
-sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/metricbeat/metricbeat.yml
-sudo sed -i 's,hosts: \["localhost:9200"\],#hosts: \["localhost:9200"\],g' /etc/metricbeat/metricbeat.yml
-sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/metricbeat/metricbeat.yml
-sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/metricbeat/metricbeat.yml
+#sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/metricbeat/metricbeat.yml
+#sudo sed -i 's,hosts: \["localhost:9200"\],#hosts: \["localhost:9200"\],g' /etc/metricbeat/metricbeat.yml
+#sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/metricbeat/metricbeat.yml
+#sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/metricbeat/metricbeat.yml
 
-curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/metricbeat' -d@/etc/metricbeat/metricbeat.template.json
+#curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/metricbeat' -d@/etc/metricbeat/metricbeat.template.json
 #sudo update-rc.d metricbeat defaults 95 10
-sudo service metricbeat start
-sudo systemctl enable metricbeat
+#sudo service metricbeat start
+#sudo systemctl enable metricbeat
 
 
 #Filebeat
 sudo apt-get update && sudo apt-get -y install filebeat 
 
-sudo sed -i 's,/var/log/\*.log,/var/log/syslog\ndocument_type: syslog,g' /etc/filebeat/filebeat.yml
-sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/filebeat/filebeat.yml
-sudo sed -i 's,hosts: \["localhost:9200"\],#hosts: \["localhost:9200"\],g' /etc/filebeat/filebeat.yml
-sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/filebeat/filebeat.yml
-sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/filebeat/filebeat.yml
+#sudo sed -i 's,/var/log/\*.log,/var/log/syslog\ndocument_type: syslog,g' /etc/filebeat/filebeat.yml
+#sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/filebeat/filebeat.yml
+#sudo sed -i 's,hosts: \["localhost:9200"\],#hosts: \["localhost:9200"\],g' /etc/filebeat/filebeat.yml
+#sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/filebeat/filebeat.yml
+#sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/filebeat/filebeat.yml
 
 curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/filebeat' -d@/etc/filebeat/filebeat.template.json
-
-sudo service filebeat start
-sudo systemctl enable filebeat
+#run the logstash command
+curl -XGET 'http://localhost:8900'
+#sudo service filebeat start
+#sudo systemctl enable filebeat
 
 
 #packetbeat
-sudo apt-get install -y libpcap0.8
-curl -L -O https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-5.5.0-amd64.deb
-sudo dpkg -i packetbeat-5.5.0-amd64.deb
+#sudo apt-get install -y libpcap0.8
+#curl -L -O https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-5.5.0-amd64.deb
+#sudo dpkg -i packetbeat-5.5.0-amd64.deb
 
-sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/packetbeat/packetbeat.yml
-sudo sed -i 's,hosts: \["localhost:9200"\],#hosts: \["localhost:9200"\],g' /etc/packetbeat/packetbeat.yml
-sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/packetbeat/packetbeat.yml
-sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/packetbeat/packetbeat.yml
+#sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/packetbeat/packetbeat.yml
+#sudo sed -i 's,hosts: \["localhost:9200"\],#hosts: \["localhost:9200"\],g' /etc/packetbeat/packetbeat.yml
+#sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/packetbeat/packetbeat.yml
+#sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/packetbeat/packetbeat.yml
 
 
-curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/packetbeat' -d@/etc/packetbeat/packetbeat.template.json
+#curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/packetbeat' -d@/etc/packetbeat/packetbeat.template.json
 
-sudo service packetbeat start
-sudo systemctl enable packetbeat
+#sudo service packetbeat start
+#sudo systemctl enable packetbeat
+
+
+#HTTP PLUGIN
+#/usr/share/logstash/bin ./logstash-plugin install logstash-http-plugin
+#then set up the conf
+#/etc/logstash/conf.d #make a file here with the config
+
 
 
 

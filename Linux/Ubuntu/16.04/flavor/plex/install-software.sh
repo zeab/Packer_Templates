@@ -26,28 +26,16 @@ sudo ufw allow ssh
 sudo ufw allow http
 #sudo ufw enable -y
 
-	 
-#Secure shared memory (need to update the root password first sudo passwd root vagrant vagrant)
-sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
 
-#INSTALL SOFTWARE
-#Install Httpie
-sudo apt-get install -y httpie 
-				
-#Installing Docker
-sudo apt-get install -y docker.io
-sudo systemctl start docker
-sudo systemctl enable docker
+sudo apt-get install -y cifs-utils
+wget -O /tmp/plex.deb https://downloads.plex.tv/plex-media-server/1.8.4.4249-3497d6779/plexmediaserver_1.8.4.4249-3497d6779_amd64.deb
+sudo dpkg -i /tmp/plex.deb
 
-#Install docker compose
-sudo apt install -y docker-compose
+mkdir /mnt/sik
+mkdir /mnt/sik/d
+mkdir /mnt/sik/e
+mkdir /mnt/sik/f
 
-sudo docker pull linuxserver/plex
-
-sudo docker create --name=plex --restart=always --net=host linuxserver/plex
-
-sudo docker start plex
-
-#final updates
-sudo apt update && sudo apt upgrade -y
+echo "//10.0.0.11/D  /mnt/sik/d  cifs  username=administrator,password=BodiTree1,iocharset=utf8,sec=ntlm  0  0" | sudo tee -a /etc/fstab
+echo "//10.0.0.11/E  /mnt/sik/e  cifs  username=administrator,password=BodiTree1,iocharset=utf8,sec=ntlm  0  0" | sudo tee -a /etc/fstab
+echo "//10.0.0.11/F  /mnt/sik/f  cifs  username=administrator,password=BodiTree1,iocharset=utf8,sec=ntlm  0  0" | sudo tee -a /etc/fstab
