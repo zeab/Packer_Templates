@@ -1,3 +1,12 @@
+#!/bin/sh -x
+
+#Define the user name to be used
+OS_USERNAME=${OS_USERNAME:-vagrant}
+
+#Install Zip/Unzip
+echo "Install Zip/Unzip"
+sudo apt-get update && sudo apt-get install -y zip unzip
+
 #Install Htop
 echo "Install Htop"
 sudo apt-get update && sudo apt install htop

@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+sudo apt autoremove
+
 echo "==> Installed packages before cleanup"
 dpkg --get-selections | grep -v deinstall
 

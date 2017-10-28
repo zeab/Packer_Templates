@@ -4,7 +4,6 @@
 OS_USERNAME=${OS_USERNAME:-vagrant}
 ELK_VERSION=${ELK_VERSION:-5.6.3}
 
-
 #REMOVE SOFTWARE
 #telnet since why would we need that?
 echo "remove software"
@@ -12,6 +11,14 @@ sudo apt-get purge -y --auto-remove telnet
 
 sudo apt-get clean
 sudo apt-get autoremove
+
+#Install Curl
+echo "Install Curl"
+sudo apt-get update && sudo apt-get install -y curl
+
+#Install Zip/Unzip
+echo "Install Zip/Unzip"
+sudo apt-get update && sudo apt-get install -y zip unzip
 
 #Install Htop
 echo "Install Htop"
@@ -28,7 +35,6 @@ sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
 wget -O /tmp/elasticsearch.deb https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELK_VERSION}.deb
 sha1sum /tmp/elasticsearch.deb 
 sudo dpkg -i /tmp/elasticsearch.deb
-
 ##MODIFY CONFIG FILE HERE
 #ClusterName
 sudo sed -i 's,#cluster.name: my-application,cluster.name: whiskey-monitoring,g' /etc/elasticsearch/elasticsearch.yml
@@ -38,35 +44,26 @@ sudo sed -i 's,#node.name: node-1,node.name: whiskey-es,g' /etc/elasticsearch/el
 sudo sed -i 's,#network.host: 192.168.0.1,network.host: 0.0.0.0,g' /etc/elasticsearch/elasticsearch.yml
 #up the max map count so it doesnt die
 sudo echo "vm.max_map_count = 262144" | sudo tee -a /etc/sysctl.conf
-
 #start and set to start on set up
 sudo service elasticsearch start
 sudo systemctl enable elasticsearch 
-
 
 
 #Install Logstash
 wget -O /tmp/logstash.deb https://artifacts.elastic.co/downloads/logstash/logstash-${ELK_VERSION}.deb
 sha1sum /tmp/logstash.deb 
 sudo dpkg -i /tmp/logstash.deb
-
-#update ip address to a way to grab it on the fly
-
-#I think i need to send in a json instead...?
-#sudo /usr/share/logstash/bin/logstash -e 'input { stdin { } } output { elasticsearch { hosts => ["localhost"] } }' --path.data /root/data
-#sudo /usr/share/logstash/bin/logstash -e 'input {http {port => 8900}} output {stdout{codec => rubydebug}}'
-sudo mv /tmp/beats.conf /etc/logstash/conf.d/beats.conf
-sudo mv /tmp/http.conf /etc/logstash/conf.d/http.conf
-
+#Move the beats and http config files
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
+sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/elk/beats.conf /etc/logstash/conf.d/beats.conf
+sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/elk/http.conf /etc/logstash/conf.d/http.conf
+#Start the logstash service
 sudo systemctl enable logstash
 sudo service logstash start
 
 
-#add a curl command about firing a logstash in at this point
-
-
-#Kibana
-
+#Install Kibana
 wget -O /tmp/kibana.deb https://artifacts.elastic.co/downloads/kibana/kibana-${ELK_VERSION}-amd64.deb
 sha1sum /tmp/kibana.deb 
 sudo dpkg -i /tmp/kibana.deb
@@ -104,7 +101,7 @@ sudo systemctl enable kibana
 
 
 #Filebeat
-sudo apt-get update && sudo apt-get -y install filebeat 
+#sudo apt-get update && sudo apt-get -y install filebeat 
 
 #sudo sed -i 's,/var/log/\*.log,/var/log/syslog\ndocument_type: syslog,g' /etc/filebeat/filebeat.yml
 #sudo sed -i 's,output.elasticsearch:,#output.elasticsearch:,g' /etc/filebeat/filebeat.yml
@@ -112,9 +109,14 @@ sudo apt-get update && sudo apt-get -y install filebeat
 #sudo sed -i 's,#output.logstash:,output.logstash:,g' /etc/filebeat/filebeat.yml
 #sudo sed -i 's,#hosts: \["localhost:5044"\],hosts: \["localhost:5044"\],g' /etc/filebeat/filebeat.yml
 
-curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/filebeat' -d@/etc/filebeat/filebeat.template.json
+#curl -H 'Content-Type: application/json' -XPUT 'http://localhost:9200/_template/filebeat' -d@/etc/filebeat/filebeat.template.json
 #run the logstash command
-curl -XGET 'http://localhost:8900'
+
+
+
+
+
+curl -H 'Content-Type: application/json' -XPOST 'http://127.0.0.1:8900' -d '{"message":"inital log message"}'
 #sudo service filebeat start
 #sudo systemctl enable filebeat
 
@@ -135,11 +137,6 @@ curl -XGET 'http://localhost:8900'
 #sudo service packetbeat start
 #sudo systemctl enable packetbeat
 
-
-#HTTP PLUGIN
-#/usr/share/logstash/bin ./logstash-plugin install logstash-http-plugin
-#then set up the conf
-#/etc/logstash/conf.d #make a file here with the config
 
 
 

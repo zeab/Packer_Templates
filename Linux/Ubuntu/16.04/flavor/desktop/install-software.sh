@@ -1,1 +1,0 @@
-echo "Desktop software to install"
