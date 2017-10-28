@@ -1,0 +1,10 @@
+{	
+	"_comment": "Build with `packer build -var-file='ub-16.04-64x-docker.json' ub-16.04-64x-base.json`",
+	
+		"_comment": 								"General Settings",
+		"vm_version":									"1.2.0",
+		"vm_flavor":									"docker",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false"
+}

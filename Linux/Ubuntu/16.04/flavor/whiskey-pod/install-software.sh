@@ -5,6 +5,7 @@ OS_USERNAME=${OS_USERNAME:-vagrant}
 #Move the compiz profile to the desktop 
 sudo mv /tmp/unity.profile /home/vagrant/Desktop/unity.profile
 
+#Uninstall bloat from desktop install
 
 #Unisntall Thunderbird
 sudo apt-get purge -y --auto-remove thunderbird
@@ -73,8 +74,8 @@ sudo ufw allow http
 
 					 
 #Secure shared memory (need to update the root password first sudo passwd root vagrant vagrant)
-sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
+#sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
+#sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
 
 
 #Install Httpie
@@ -120,7 +121,7 @@ sudo apt-get install -y indicator-multiload
 #sudo dbus-launch indicator-multiload
 
 #install fly cli
-wget -O /tmp/fly https://github.com/concourse/concourse/releases/download/v3.3.4/fly_linux_amd64
+wget -O /tmp/fly https://github.com/concourse/concourse/releases/download/v3.5.0/fly_linux_amd64
 mkdir /usr/share/fly
 mv -v /tmp/fly /usr/share/fly/fly
 chmod +x /usr/share/fly/fly
@@ -129,7 +130,7 @@ chmod +x /usr/share/fly/fly
 
 
 #download kafka
-wget -O /tmp/kafka.tar.gz http://www-us.apache.org/dist/kafka/0.11.0.0/kafka_2.12-0.11.0.0.tgz
+wget -O /tmp/kafka.tar.gz http://www-us.apache.org/dist/kafka/0.11.0.0/kafka_2.12-0.11.0.1.tgz
 #unzip from tmp to usr/share
 tar xfz /tmp/kafka.tar.gz -C /usr/share/
 #make new kafka dir
@@ -137,7 +138,7 @@ mkdir /usr/share/kafka/
 #move the interior unziped folder to new versionless kafka 
 mv /usr/share/kafka*/* /usr/share/kafka
 #remove the old folder
-rm -r /usr/share/kafka_2.12-0.11.0.0
+rm -r /usr/share/kafka_2.12-0.11.0.1
 #give that folder excution rights
 sudo chmod -R +x /usr/share/kafka/bin
 #add to paths
@@ -149,13 +150,14 @@ sed -i 's,PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/us
 ##INSTALL JAVA8 from an install file rather than have the code here
 #sh /media/floppy0/install-java8.sh
 #########
-echo "Installing Java 8"
-apt-get update
-apt-get install -y  software-properties-common
-add-apt-repository ppa:webupd8team/java -y
-apt-get update
-echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-apt-get install -y oracle-java8-installer
+echo "Installing OpenJDK 8"
+sudo apt-get install -y openjdk-8-jdk
+#sudo apt-get update
+#sudo apt-get install -y  software-properties-common
+#sudo add-apt-repository ppa:webupd8team/java -y
+#sudo apt-get update
+#echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+#sudo apt-get install -y oracle-java8-installer
 #########
 
 #Install IntelliJ
@@ -163,7 +165,7 @@ apt-get install -y oracle-java8-installer
 #########
 #########
 echo "Installing IntelliJ"
-wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.2.1.tar.gz &&
+wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.2.5.tar.gz &&
 mkdir /tmp/intellij/ &&
 tar xfz /tmp/intellij.tar.gz -C /tmp/intellij/ &&
 mkdir /usr/share/intellij/ &&
@@ -193,14 +195,18 @@ printf '[Desktop Entry]\n Version=1.0\n Type=Application\n Name=IntelliJ IDEA Co
 #Installing Docker
 #########
 echo "Installing Docker"
-sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+#Installing Docker
 sudo apt-get update
-sudo apt-cache policy docker-engine
-sudo apt-get install -y docker-engine
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update && sudo apt-get install -y docker-ce
+sudo systemctl start docker
+sudo systemctl enable docker   
 
-echo "Setting Docker so you dont have to sudo every time"
-sudo usermod -aG docker ${OS_USERNAME}
+#echo "Setting Docker so you dont have to sudo every time"
+#sudo usermod -aG docker ${OS_USERNAME}
 #########
 
 ####Enable Atom
@@ -210,6 +216,7 @@ sudo apt update
 sudo add-apt-repository ppa:webupd8team/atom -y
 sudo apt update
 sudo apt install -y atom
+
 sudo xdg-mime default atom.desktop text/plain
 
 #Visual Studio Code - Install
@@ -252,6 +259,7 @@ sudo xdg-mime default atom.desktop text/plain
 #########
 
 
+#VisualVM
 #download visualvm and place it in a location for easy access
 wget -O /tmp/visualvm.zip https://github.com/visualvm/visualvm.src/releases/download/1.3.9/visualvm_139.zip
 mkdir /tmp/visualvm/
@@ -260,11 +268,6 @@ sudo mkdir /usr/share/visualvm/
 sudo mv -v /tmp/visualvm/visualvm*/* /usr/share/visualvm/
 chmod +x /usr/share/visualvm/bin/./visualvm
 sudo printf '[Desktop Entry]\nName=VisualVM\nComment=All-in-One Java Troubleshooting Tool\nKeywords=java;jvm;profiler;monitoring\nExec=/usr/share/visualvm/bin/visualvm\nIcon=/usr/share/visualvm/etc/visualvm.icns\nCategories=Development;Java;\nTerminal=false\nType=Application' > '/usr/share/applications/visualvm.desktop'
-
-
-
-#sudo apt-get update
-#sudo apt-get install -y visualvm
 
 
 #Install Kubectl

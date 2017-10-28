@@ -1,72 +1,34 @@
+#!/bin/sh -x
+
+#Define the user name to be used
+OS_USERNAME=${OS_USERNAME:-vagrant}
+ELK_VERSION=${ELK_VERSION:-5.6.3}
+
 
 #REMOVE SOFTWARE
 #telnet since why would we need that?
+echo "remove software"
 sudo apt-get purge -y --auto-remove telnet
 
 sudo apt-get clean
 sudo apt-get autoremove
 
-#Fix Install
-#Install the termainl
-echo "Fixing terminal issues"
-sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
-sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
-
-
-#Hardening
-#Install Firewall
-sudo apt-get install -y ufw 
-sudo ufw allow ssh
-sudo ufw allow http
-#sudo ufw enable -y
-
-	 
-#Secure shared memory (need to update the root password first sudo passwd root vagrant vagrant)
-#sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-#sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
-
 #Install Htop
+echo "Install Htop"
 sudo apt-get update && sudo apt install htop
 
-#INSTALL SOFTWARE
-#Install Httpie
-sudo apt-get update && sudo apt-get install -y httpie 
-				
-#Installing Docker
-#sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-#sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
-#sudo apt-get update
-#sudo apt-cache policy docker-engine
-#sudo apt-get install -y docker-engine
+#Install Nano
+echo "Install Nano"
+sudo apt-get update && sudo apt-get install -y nano
 
-sudo apt-get install -y docker.io
-sudo systemctl start docker
-sudo systemctl enable docker
-
-#Install docker compose
-sudo apt-get update && sudo apt install -y docker-compose
-
-
-##INSTALL JAVA8 from an install file rather than have the code here
-#sh /media/floppy0/install-java8.sh
-#########
-echo "Installing Java 8"
-apt-get update
-apt-get install -y  software-properties-common
-add-apt-repository ppa:webupd8team/java -y
-apt-get update
-echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-apt-get install -y oracle-java8-installer
-#########
-
-
-##Add elasticsearch items to the apt-get repo
-sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-sudo echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
-
+echo "Installing OpenJDK 8"
+sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
 
 #Install Elasticsearch
-sudo apt-get update && sudo apt-get install -y elasticsearch
+wget -O /tmp/elasticsearch.deb https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELK_VERSION}.deb
+sha1sum /tmp/elasticsearch.deb 
+sudo dpkg -i /tmp/elasticsearch.deb
+
 ##MODIFY CONFIG FILE HERE
 #ClusterName
 sudo sed -i 's,#cluster.name: my-application,cluster.name: whiskey-monitoring,g' /etc/elasticsearch/elasticsearch.yml
@@ -75,14 +37,19 @@ sudo sed -i 's,#node.name: node-1,node.name: whiskey-es,g' /etc/elasticsearch/el
 #NetworkIp
 sudo sed -i 's,#network.host: 192.168.0.1,network.host: 0.0.0.0,g' /etc/elasticsearch/elasticsearch.yml
 #up the max map count so it doesnt die
-sudo echo "vm.max_map_count = 262144" | tee -a /etc/sysctl.conf
+sudo echo "vm.max_map_count = 262144" | sudo tee -a /etc/sysctl.conf
+
 #start and set to start on set up
 sudo service elasticsearch start
 sudo systemctl enable elasticsearch 
 
 
-#Logstash
-sudo apt-get update && sudo apt-get install -y logstash
+
+#Install Logstash
+wget -O /tmp/logstash.deb https://artifacts.elastic.co/downloads/logstash/logstash-${ELK_VERSION}.deb
+sha1sum /tmp/logstash.deb 
+sudo dpkg -i /tmp/logstash.deb
+
 #update ip address to a way to grab it on the fly
 
 #I think i need to send in a json instead...?
@@ -99,9 +66,11 @@ sudo service logstash start
 
 
 #Kibana
-#sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-#sudo echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
-sudo apt-get update && sudo apt-get install -y kibana
+
+wget -O /tmp/kibana.deb https://artifacts.elastic.co/downloads/kibana/kibana-${ELK_VERSION}-amd64.deb
+sha1sum /tmp/kibana.deb 
+sudo dpkg -i /tmp/kibana.deb
+
 ##MAKE CONFIG FILE CHANGES HERE
 #sed "s|\$ROOT|${HOME}|g" abc.sh
 

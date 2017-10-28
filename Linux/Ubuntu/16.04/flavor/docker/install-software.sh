@@ -1,50 +1,41 @@
+#!/bin/sh -x
+
+#Define the user name to be used
+OS_USERNAME=${OS_USERNAME:-vagrant}
 
 #REMOVE SOFTWARE
 #telnet since why would we need that?
+echo "remove software"
 sudo apt-get purge -y --auto-remove telnet
 
 sudo apt-get clean
 sudo apt-get autoremove
 
-#Fix Install
-#Install the termainl
-echo "Fixing terminal issues"
-sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
-sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
+#Install Htop
+echo "Install Htop"
+sudo apt-get update && sudo apt install htop
 
+#Install Nano
+echo "Install Nano"
+sudo apt-get update && sudo apt-get install -y nano
 
-#Hardening
-#Install Firewall
-sudo apt-get install -y ufw 
-sudo ufw allow ssh
-sudo ufw allow http
-#sudo ufw enable -y
-
-	 
-#Secure shared memory (need to update the root password first sudo passwd root vagrant vagrant)
-sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
-
-#INSTALL SOFTWARE
-#Install Httpie
-sudo apt-get install -y httpie 
-				
 #Installing Docker
-#sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-#sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
-#sudo apt-get update
-#sudo apt-cache policy docker-engine
-#sudo apt-get install -y docker-engine
-
-sudo apt-get install -y docker.io
+sudo apt-get update
+sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update && sudo apt-get install -y docker-ce
+#Start and autostart the docker service
 sudo systemctl start docker
 sudo systemctl enable docker
-
-#Install docker compose
-sudo apt install -y docker-compose
+#Set docker as part of the user group   
+sudo usermod -aG docker ${OS_USERNAME}
 
 #set up 2nd network card
+echo "Enable 2nd network card for brdiged connections"
 printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
 
 #final updates
+echo "final update and upgrade in install-software"
 sudo apt update && sudo apt upgrade -y
