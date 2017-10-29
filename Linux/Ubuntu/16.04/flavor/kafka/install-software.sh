@@ -1,74 +1,60 @@
+#!/bin/sh -x
 
-#ENABLE 2nd lan card
-
+#Define the user name to be used
+OS_USERNAME=${OS_USERNAME:-vagrant}
 
 #REMOVE SOFTWARE
 #telnet since why would we need that?
+echo "remove software"
 sudo apt-get purge -y --auto-remove telnet
 
 sudo apt-get clean
 sudo apt-get autoremove
 
-#Fix Install
-#Install the termainl
-echo "Fixing terminal issues"
-sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
-sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
+#Install Curl
+echo "Install Curl"
+sudo apt-get update && sudo apt-get install -y curl
 
+#Install Htop
+echo "Install Htop"
+sudo apt-get update && sudo apt install htop
 
-#Hardening
-#Install Firewall
-sudo apt-get install -y ufw 
-sudo ufw allow ssh
-sudo ufw allow http
-#sudo ufw enable -y
+#Install Nano
+echo "Install Nano"
+sudo apt-get update && sudo apt-get install -y nano
 
-	 
-#Secure shared memory (need to update the root password first sudo passwd root vagrant vagrant)
-sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
-
-#INSTALL SOFTWARE
-#Install Httpie
-sudo apt-get install -y httpie 
-				
 #Installing Docker
-sudo apt-get install -y docker.io
+sudo apt-get update
+sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update && sudo apt-get install -y docker-ce
+#Start and autostart the docker service
 sudo systemctl start docker
 sudo systemctl enable docker
+#Set docker as part of the user group   
+sudo usermod -aG docker ${OS_USERNAME}
 
-#Install docker compose
-sudo apt install -y docker-compose
-
-
-#wget -O /tmp/docker-machine https://github.com/docker/machine/releases/download/v0.6.0/docker-machine-$(uname -s)-$(uname -m) 
-#sudo chmod +x /tmp/docker-machine
-#sudo mv /tmp/docker-machine /usr/local/bin
 
 #Pull the spotify image
 sudo docker pull spotify/kafka
 
-#set up 2nd network card
-printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
-
-#sudo docker run --restart=always -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=`docker-machine ip \`docker-machine active\`` --env ADVERTISED_PORT=9092 spotify/kafka
-
-#move the auto start shell file
-mv -v /tmp/auto-start-kafka.sh /home/vagrant/
+#Grab the autostart and service files
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
+sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/kafka/auto-start-kafka.sh /home/vagrant/auto-start-kafka.sh
 chmod +x /home/vagrant/auto-start-kafka.sh
-
-
-#move the kafka upstart file
-mv -v /tmp/kafka.service /etc/systemd/system/kafka.service
+sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/kafka/kafka.service /etc/systemd/system/kafka.service
 sudo chmod 664 /etc/systemd/system/kafka.service
-
 sudo systemctl enable kafka.service
 
 
-#sudo docker run --restart=always -d spo
-#docker run -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=`docker-machine ip \`docker-machine active\`` --env ADVERTISED_PORT=9092 spotify/kafka
-
-#Need to enable docker to auto-start
+#set up 2nd network card
+echo "Enable 2nd network card for brdiged connections"
+printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
 
 #final updates
+echo "final update and upgrade in install-software"
 sudo apt update && sudo apt upgrade -y
+
