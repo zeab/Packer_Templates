@@ -8,7 +8,8 @@ OS_USERNAME=${OS_USERNAME:-vagrant}
 #sudo apt-get install -y ufw 
 #sudo ufw allow ssh
 #sudo ufw allow http
-#sudo ufw enable -y
+#sudo ufw allow 32400/tcp
+#echo "y" | sudo ufw enable
 
 #Install Curl
 echo "Install Curl"
