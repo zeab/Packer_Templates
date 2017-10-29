@@ -3,6 +3,17 @@
 #Define the user name to be used
 OS_USERNAME=${OS_USERNAME:-vagrant}
 
+#Hardening
+#Install Firewall
+#sudo apt-get install -y ufw 
+#sudo ufw allow ssh
+#sudo ufw allow http
+#sudo ufw enable -y
+
+#Install Curl
+echo "Install Curl"
+sudo apt-get update && sudo apt-get install -y curl
+
 #Install Zip/Unzip
 echo "Install Zip/Unzip"
 sudo apt-get update && sudo apt-get install -y zip unzip
