@@ -11,6 +11,10 @@ sudo apt-get purge -y --auto-remove telnet
 sudo apt-get clean
 sudo apt-get autoremove
 
+#Install Zip/Unzip
+echo "Install Zip/Unzip"
+sudo apt-get update && sudo apt-get install -y zip unzip
+
 #Install Curl
 echo "Install Curl"
 sudo apt-get update && sudo apt-get install -y curl
