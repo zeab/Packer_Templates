@@ -11,6 +11,14 @@ sudo apt-get purge -y --auto-remove telnet
 sudo apt-get clean
 sudo apt-get autoremove
 
+#Install Curl
+echo "Install Curl"
+sudo apt-get update && sudo apt-get install -y curl
+
+#Install Zip/Unzip
+echo "Install Zip/Unzip"
+sudo apt-get update && sudo apt-get install -y zip unzip
+
 #Install Htop
 echo "Install Htop"
 sudo apt-get update && sudo apt install htop
