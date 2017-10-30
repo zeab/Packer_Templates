@@ -45,11 +45,11 @@ sudo usermod -aG docker ${OS_USERNAME}
 sudo docker pull spotify/kafka
 
 #Grab the autostart and service files
-wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_Files/archive/master.zip
 unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
-sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/kafka/auto-start-kafka.sh /home/vagrant/auto-start-kafka.sh
+sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/kafka/auto-start-kafka.sh /home/vagrant/auto-start-kafka.sh
 chmod +x /home/vagrant/auto-start-kafka.sh
-sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/kafka/kafka.service /etc/systemd/system/kafka.service
+sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/kafka/kafka.service /etc/systemd/system/kafka.service
 sudo chmod 664 /etc/systemd/system/kafka.service
 sudo systemctl enable kafka.service
 

@@ -366,9 +366,9 @@ sudo apt-get update && sudo apt-get install -y sqlite3
 
 
 #Move the compiz profile to the desktop 
-wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_Files/archive/master.zip
 unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
-sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/whiskey/unity.profile /home/vagrant/Desktop/unity.profile
+sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/whiskey/unity.profile /home/vagrant/Desktop/unity.profile
 
 
 #Set Desktop Icons

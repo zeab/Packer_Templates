@@ -46,9 +46,9 @@ sudo docker pull docker.bintray.io/jfrog/artifactory-oss:latest
 sudo docker run --name artifactory -d -p 8081:8081 docker.bintray.io/jfrog/artifactory-oss:latest
 
 #Grab the autostart and service files
-wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_Files/archive/master.zip
 unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
-sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/artifactory/artifactory.service /etc/systemd/system/artifactory.service
+sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/artifactory/artifactory.service /etc/systemd/system/artifactory.service
 sudo chmod 664 /etc/systemd/system/artifactory.service
 sudo systemctl enable artifactory.service
 

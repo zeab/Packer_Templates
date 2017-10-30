@@ -54,10 +54,10 @@ wget -O /tmp/logstash.deb https://artifacts.elastic.co/downloads/logstash/logsta
 sha1sum /tmp/logstash.deb 
 sudo dpkg -i /tmp/logstash.deb
 #Move the beats and http config files
-wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_Files/archive/master.zip
 unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
-sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/elk/beats.conf /etc/logstash/conf.d/beats.conf
-sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/elk/http.conf /etc/logstash/conf.d/http.conf
+sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/elk/beats.conf /etc/logstash/conf.d/beats.conf
+sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/elk/http.conf /etc/logstash/conf.d/http.conf
 #Start the logstash service
 sudo systemctl enable logstash
 sudo service logstash start
