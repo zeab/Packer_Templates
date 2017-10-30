@@ -3,6 +3,7 @@
 OS_USERNAME=${OS_USERNAME:-vagrant}
 
 #Uninstall bloat from desktop install
+echo "**********Uninstall Software bloat**********"
 
 #Unisntall Thunderbird
 sudo apt-get purge -y --auto-remove thunderbird
@@ -68,37 +69,39 @@ sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
 sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
 
 #Install Terminator
-echo "Install Terminator"
+echo "**********Install Terminator**********"
 sudo apt-get update && sudo apt-get install -y terminator 
 
 #Install Httpie
-echo "Install Httpie"
+echo "**********Install Httpie**********"
 sudo apt-get update && sudo apt-get install -y httpie 
 
 #Install Zip/Unzip
-echo "Install Zip/Unzip"
+echo "**********Install Zip/Unzip**********"
 sudo apt-get update && sudo apt-get install -y zip unzip
 
 #Install Curl
-echo "Install Curl"
+echo "**********Install Curl**********"
 sudo apt-get update && sudo apt-get install -y curl
 
 #Install Htop
-echo "Install Htop"
+echo "**********Install Htop**********"
 sudo apt-get update && sudo apt install htop
 
 #Install Nano
-echo "Install Nano"
+echo "**********Install Nano**********"
 sudo apt-get update && sudo apt-get install -y nano
 
 #########
 #Instll variety
+echo "**********Install Variety**********"
 sudo apt-get update && sudo apt-get install -y variety
 #add the auto start to the dir
 printf '[Desktop Entry]\nName=Variety\nComment=Variety Wallpaper Changer\nIcon=variety\nExec=variety\nTerminal=false\nType=Application\nX-GNOME-Autostart-Delay=20' > '/home/vagrant/.config/autostart/variety.desktop'
 sudo chmod ugo+wrx /home/vagrant/.config/autostart/variety.desktop
 
 #Install Chrome
+echo "**********Instal Chrome**********"
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 sudo apt-get update && sudo apt-get install -y google-chrome-stable
@@ -126,17 +129,21 @@ sleep 1m
 
 
 #Install dconf editor
+echo "**********Install Dconf**********"
 sudo apt-get update && sudo apt-get install -y dconf-editor
 
 #Compiz gui editor
+echo "**********Install Compiz Editor**********"
 sudo apt-get update &&  sudo apt-get install -y compizconfig-settings-manager
 
 #Install topbar system monitor
+echo "**********Install Indicator-Multiload**********"
 sudo apt-get update && sudo apt-get install -y indicator-multiload
 #start the indicator
 #sudo dbus-launch indicator-multiload
 
 #install fly cli
+echo "**********Install FlyCLI**********"
 wget -O /tmp/fly https://github.com/concourse/concourse/releases/download/v3.5.0/fly_linux_amd64
 mkdir /usr/share/fly
 mv -v /tmp/fly /usr/share/fly/fly
@@ -145,6 +152,7 @@ chmod +x /usr/share/fly/fly
 #sudo printf "export PATH=/usr/share/fly" >> /home/vagrant/.profile
 
 
+echo "**********Install Kafka**********"
 #download kafka
 wget -O /tmp/kafka.tar.gz http://www-us.apache.org/dist/kafka/0.11.0.0/kafka_2.12-0.11.0.1.tgz
 #unzip from tmp to usr/share
@@ -166,7 +174,7 @@ sed -i 's,PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/us
 ##INSTALL JAVA8 from an install file rather than have the code here
 #sh /media/floppy0/install-java8.sh
 #########
-echo "Installing OpenJDK 8"
+echo "**********Install OpenJDK 8**********"
 sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
 #########
 
@@ -174,7 +182,7 @@ sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
 #Install IntelliJ / Creates Launcher Icon / Add Auto Start on Login
 #########
 #########
-echo "Installing IntelliJ"
+echo "**********Install IntelliJ**********"
 wget -O /tmp/intellij.tar.gz https://download-cf.jetbrains.com/idea/ideaIC-2017.2.5.tar.gz &&
 mkdir /tmp/intellij/ &&
 tar xfz /tmp/intellij.tar.gz -C /tmp/intellij/ &&
@@ -204,7 +212,7 @@ printf '[Desktop Entry]\n Version=1.0\n Type=Application\n Name=IntelliJ IDEA Co
 
 #Installing Docker
 #########
-echo "Installing Docker"
+echo "**********Install Docker**********"
 #Installing Docker
 sudo apt-get update
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
@@ -222,11 +230,11 @@ sudo usermod -aG docker ${OS_USERNAME}
 ####Enable Atom
 #wget -O /tmp/atom.deb https://github.com/atom/atom/releases/download/v1.19.0/atom-amd64.deb
 #sudo dpkg --install atom.deb
+echo "**********Install Atom**********"
 sudo apt update
 sudo add-apt-repository ppa:webupd8team/atom -y
-sudo apt update
-sudo apt install -y atom
-
+sudo apt update && sudo apt install -y atom
+echo "**********Setting Atom as defualt text editor**********"
 sudo xdg-mime default atom.desktop text/plain
 
 #Visual Studio Code - Install
@@ -271,6 +279,7 @@ sudo xdg-mime default atom.desktop text/plain
 
 #VisualVM
 #download visualvm and place it in a location for easy access
+echo "**********Install VisualVM**********"
 wget -O /tmp/visualvm.zip https://github.com/visualvm/visualvm.src/releases/download/1.3.9/visualvm_139.zip
 mkdir /tmp/visualvm/
 unzip /tmp/visualvm.zip -d /tmp/visualvm/
@@ -283,7 +292,7 @@ sudo printf '[Desktop Entry]\nName=VisualVM\nComment=All-in-One Java Troubleshoo
 #Install Kubectl
 #########
 #Download the kubectl
-echo "Installing Kubectl"
+echo "**********Instal Kubectl**********"
 sudo apt-get update
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 sudo apt-get update
@@ -311,7 +320,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 #Install Node.js (For Swagger Servers)
 #########
-echo "Installing Node.js"
+echo "**********Instal Node.js**********"
 sudo apt-get update && sudo apt-get install -y nodejs npm
 #sudo apt-get update
 #curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
@@ -361,11 +370,13 @@ sudo apt-get update && sudo apt-get install -y nodejs npm
 
 #Install sqlite
 #########
+echo "**********Install Sqlite**********"
 sudo apt-get update && sudo apt-get install -y sqlite3
 #########
 
 
 #Move the compiz profile to the desktop 
+echo "Getting Github floppy files"
 wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_Files/archive/master.zip
 unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
 sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/whiskey/unity.profile /home/vagrant/Desktop/unity.profile
@@ -373,8 +384,8 @@ sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/whiskey/unity.profile /home
 
 #Set Desktop Icons
 echo "Setting Launcher Icons"
-dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
-#dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://terminator.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
+#dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
+dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop', 'application://terminator.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
 
 
 #Sets the buttons on the right and correct widnows (So the ubuntu desktop people are dick's and decided everyone should have the buttons in the same place the same way so there is no option to change it)
@@ -394,8 +405,8 @@ dbus-launch gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugi
 
 
 #enable workspaces
-dbus-launch gsettings set org.compiz.core:/org/compiz/profiles/unity/plugins/core/ hsize 4
-dbus-launch gsettings set org.compiz.core:/org/compiz/profiles/unity/plugins/core/ vsize 4
+dbus-launch gsettings set org.compiz.core:/org/compiz/profiles/unity/plugins/core/ hsize 2
+dbus-launch gsettings set org.compiz.core:/org/compiz/profiles/unity/plugins/core/ vsize 2
 
 #always show the window menu
 dbus-launch gsettings set com.canonical.Unity always-show-menus true
@@ -419,24 +430,28 @@ dbus-launch gsettings set org.gnome.nautilus.preferences enable-interactive-sear
 
 #Multiload indicators
 dbus-launch gsettings set de.mh21.indicator-multiload.general width 100
-#dbus-launch gsettings set de.mh21.indicator-multiload.general color-scheme traditional
-dbus-launch gsettings set de.mh21.indicator-multiload.general background-color traditional:background
-dbus-launch gsettings set de.mh21.indicator-multiload.general autostart true
+dbus-launch gsettings set de.mh21.indicator-multiload.general background-color 'traditional:background'
+dbus-launch gsettings set de.mh21.indicator-multiload.general color-scheme 'traditional'
+
 
 dbus-launch gsettings set de.mh21.indicator-multiload.graphs.cpu enabled true
 dbus-launch gsettings set de.mh21.indicator-multiload.graphs.mem enabled true
-
+dbus-launch gsettings set de.mh21.indicator-multiload.graphs.net enabled true
 
 sudo apt update && sudo apt upgrade -y
 
 #disable guest login
 sudo sh -c 'printf "[Seat:*]\nallow-guest=false\n" >/etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 
-#sleep 10 miu 
+#Allow for some clean up and manual intervention at the end
 echo "Sleeping 10 min for pictures"
-sleep 9m
+sleep 5m
+echo "5 min left"
+sleep 4m
 echo "Times almost up you better decide"
 sleep 30s
 echo "30 seconds left"
-sleep 30s
+sleep 15s
+echo "15 seconds left"
+sleep 15s
 
