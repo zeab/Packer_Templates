@@ -168,11 +168,26 @@
 			"type": 									"shell",
 			"environment_vars": [
 														"OS_USERNAME={{user `os_username`}}",
+														"OS_PASSWORD={{user `os_password`}}",
+														"INSTALL_DESKTOP={{user `install_desktop`}}"
+				],
+			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+			"scripts": [
+														"{{user `floppy_files_path`}}/install-desktop.sh",
+														"{{user `floppy_files_path`}}/reboot.sh"
+				],
+			"pause_before": 							"30s"	
+		},
+		{
+			"type": 									"shell",
+			"environment_vars": [
+														"OS_USERNAME={{user `os_username`}}",
 														"OS_PASSWORD={{user `os_password`}}"
 				],
 			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
 			"scripts": [
-														"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/{{user `sftwre_install_file`}}"
+														"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/{{user `sftwre_install_file`}}",
+														"{{user `floppy_files_path`}}/reboot.sh"
 				],
 			"pause_before": 							"30s"	
 		},

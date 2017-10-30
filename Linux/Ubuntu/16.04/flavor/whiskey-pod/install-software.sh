@@ -2,9 +2,6 @@
 
 OS_USERNAME=${OS_USERNAME:-vagrant}
 
-#Move the compiz profile to the desktop 
-sudo mv /tmp/unity.profile /home/vagrant/Desktop/unity.profile
-
 #Uninstall bloat from desktop install
 
 #Unisntall Thunderbird
@@ -40,7 +37,6 @@ sudo apt-get purge -y --auto-remove xdiagnose
 #removes simple scan
 sudo apt-get purge -y --auto-remove simple-scan
 
-
 #get rid of the stupid overlay scroll bar
 sudo apt-get purge -y --auto-remove overlay-scrollbar
 
@@ -66,57 +62,77 @@ sudo apt-get purge -y --auto-remove libgweather*
 sudo apt-get clean
 sudo apt-get autoremove
 
-#Install Firewall
-sudo apt-get install -y ufw 
-sudo ufw allow ssh
-sudo ufw allow http
-#sudo ufw enable -y
-
-					 
-#Secure shared memory (need to update the root password first sudo passwd root vagrant vagrant)
-#sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-#sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
-
-
-#Install Httpie
-sudo apt-get install -y httpie 
-
 #Install the termainl
 echo "Fixing terminal issues"
 sed -i 's,LANG="en_US",LANG="en_US.UTF-8",g' /etc/default/locale
 sed -i 's,LANGUAGE="en_US:",LANGUAGE="en_US",g' /etc/default/locale
 
-#Install Chrome
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-sudo apt-get update 
-sudo apt-get install -y google-chrome-stable
+#Install Terminator
+echo "Install Terminator"
+sudo apt-get update && sudo apt-get install -y terminator 
+
+#Install Httpie
+echo "Install Httpie"
+sudo apt-get update && sudo apt-get install -y httpie 
+
+#Install Zip/Unzip
+echo "Install Zip/Unzip"
+sudo apt-get update && sudo apt-get install -y zip unzip
+
+#Install Curl
+echo "Install Curl"
+sudo apt-get update && sudo apt-get install -y curl
+
+#Install Htop
+echo "Install Htop"
+sudo apt-get update && sudo apt install htop
+
+#Install Nano
+echo "Install Nano"
+sudo apt-get update && sudo apt-get install -y nano
 
 #########
 #Instll variety
-sudo apt-get update
-sudo apt-get install -y variety
-
-#create auto start folder for variety
-#sudo chown "vagrant":"vagrant" -R /home/vagrant/.config
-#sudo rm -r /home/vagrant/.config/autostart
-#mkdir /home/vagrant/.config/autostart
-
+sudo apt-get update && sudo apt-get install -y variety
 #add the auto start to the dir
 printf '[Desktop Entry]\nName=Variety\nComment=Variety Wallpaper Changer\nIcon=variety\nExec=variety\nTerminal=false\nType=Application\nX-GNOME-Autostart-Delay=20' > '/home/vagrant/.config/autostart/variety.desktop'
 sudo chmod ugo+wrx /home/vagrant/.config/autostart/variety.desktop
 
+#Install Chrome
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+sudo apt-get update && sudo apt-get install -y google-chrome-stable
+
+
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "***********************Modifications Are Safe***************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "***********************Modifications Are Safe***************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+echo "************************************************************************"
+sleep 1m
+
+
 #Install dconf editor
-sudo apt-get update
-sudo apt-get install -y dconf-editor
+sudo apt-get update && sudo apt-get install -y dconf-editor
 
 #Compiz gui editor
-sudo apt-get update
-sudo apt-get install -y compizconfig-settings-manager
+sudo apt-get update &&  sudo apt-get install -y compizconfig-settings-manager
 
 #Install topbar system monitor
-sudo apt-get update
-sudo apt-get install -y indicator-multiload
+sudo apt-get update && sudo apt-get install -y indicator-multiload
 #start the indicator
 #sudo dbus-launch indicator-multiload
 
@@ -151,13 +167,7 @@ sed -i 's,PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/us
 #sh /media/floppy0/install-java8.sh
 #########
 echo "Installing OpenJDK 8"
-sudo apt-get install -y openjdk-8-jdk
-#sudo apt-get update
-#sudo apt-get install -y  software-properties-common
-#sudo add-apt-repository ppa:webupd8team/java -y
-#sudo apt-get update
-#echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-#sudo apt-get install -y oracle-java8-installer
+sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
 #########
 
 #Install IntelliJ
@@ -204,7 +214,7 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt-get update && sudo apt-get install -y docker-ce
 sudo systemctl start docker
 sudo systemctl enable docker   
-
+sudo usermod -aG docker ${OS_USERNAME}
 #echo "Setting Docker so you dont have to sudo every time"
 #sudo usermod -aG docker ${OS_USERNAME}
 #########
@@ -302,40 +312,69 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 #Install Node.js (For Swagger Servers)
 #########
 echo "Installing Node.js"
-sudo apt-get update
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install -y nodejs
+sudo apt-get update && sudo apt-get install -y nodejs npm
+#sudo apt-get update
+#curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+#sudo apt-get install -y nodejs
 #########
 
 
 #Install SBT (For Scala Builds)
 #########
-echo "Installing SBT"
-echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
-sudo apt-get update
-sudo apt-get install -y sbt
+#echo "Installing SBT (All versions)"
+#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-0.13.15.deb
+#sudo dpkg -i sbt.deb
+#sudo apt-get update && sudo apt-get install sbt
+#rm /tmp/sbt.deb
+
+#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-0.13.16.deb
+#sudo dpkg -i sbt.deb
+#sudo apt-get update && sudo apt-get install sbt
+#rm /tmp/sbt.deb
+
+#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.0.deb
+#sudo dpkg -i sbt.deb
+#sudo apt-get update && sudo apt-get install sbt
+#rm /tmp/sbt.deb
+
+#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.1.deb
+#sudo dpkg -i sbt.deb
+#sudo apt-get update && sudo apt-get install sbt
+#rm /tmp/sbt.deb
+
+#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.2.deb
+#sudo dpkg -i sbt.deb
+#sudo apt-get update && sudo apt-get install sbt
+#rm /tmp/sbt.deb
+
+#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.3.deb
+#sudo dpkg -i sbt.deb
+#sudo apt-get update && sudo apt-get install sbt
+#rm /tmp/sbt.deb
+#echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+#sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+#sudo apt-get update && sudo apt-get install -y sbt
 #Compile the sbt under the vagrant user
-sudo -H -u ${OS_USERNAME} bash -c 'sbt compile'
+#sudo -H -u ${OS_USERNAME} bash -c 'sbt compile'
 #########
 
 
 #Install sqlite
 #########
-sudo apt-get update
-sudo apt-get install -y sqlite3
+sudo apt-get update && sudo apt-get install -y sqlite3
 #########
 
 
-
-
-#sudo python /tmp/set-compizconfig.py /tmp/compizconfig.profile
+#Move the compiz profile to the desktop 
+wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_FIles/archive/master.zip
+unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
+sudo mv /tmp/floppy_files/Packer_Floppy_FIles-master/whiskey/unity.profile /home/vagrant/Desktop/unity.profile
 
 
 #Set Desktop Icons
 echo "Setting Launcher Icons"
-dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://gnome-terminal.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
-#'application://code.desktop',
+dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
+#dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://terminator.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
 
 
 #Sets the buttons on the right and correct widnows (So the ubuntu desktop people are dick's and decided everyone should have the buttons in the same place the same way so there is no option to change it)
@@ -380,7 +419,7 @@ dbus-launch gsettings set org.gnome.nautilus.preferences enable-interactive-sear
 
 #Multiload indicators
 dbus-launch gsettings set de.mh21.indicator-multiload.general width 100
-dbus-launch gsettings set de.mh21.indicator-multiload.general color-scheme traditional
+#dbus-launch gsettings set de.mh21.indicator-multiload.general color-scheme traditional
 dbus-launch gsettings set de.mh21.indicator-multiload.general background-color traditional:background
 dbus-launch gsettings set de.mh21.indicator-multiload.general autostart true
 
@@ -388,57 +427,16 @@ dbus-launch gsettings set de.mh21.indicator-multiload.graphs.cpu enabled true
 dbus-launch gsettings set de.mh21.indicator-multiload.graphs.mem enabled true
 
 
-
 sudo apt update && sudo apt upgrade -y
-
 
 #disable guest login
 sudo sh -c 'printf "[Seat:*]\nallow-guest=false\n" >/etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 
-
-
-#'application://firefox.desktop', 'application://gnome-terminal.desktop', 'application://jetbrains-idea.ce.desktop', 'application://code.desktop'
-#['ubiquity.desktop', 'firefox.desktop', 'nautilus.desktop']
-#['ubiquity.desktop', 'firefox.desktop', 'evolution.desktop', 'empathy.desktop', 'rhythmbox.desktop', 'org.gnome.Photos.desktop', 'libreoffice-writer.desktop', 'nautilus.desktop', 'yelp.desktop']
-
-#sudo apt-get install gnome-tweak-tool
-#sudo apt-get install chrome-gnome-shell
-
-#sudo apt-get install gnome-shell
-
-
-#install gnome termial
-#sudo apt-get install gnome-terminal
-
-#Firefox
-#sudo apt-get install firefox
-#sudo apt-get install mozilla-noscript
-
-#sudo apt-get install dconf-editor
-
-
-#Disable guest account
-#Install following package
-
-# apt-get install gksu
-
-#Open Terminal and run following
-
-# gksu gedit /etc/lightdm/lightdm.conf
-
-#Add following lines
-
-# [SeatDefaults]
-#greeter-session=unity-greeter
-#allow-guest=false
-
-#Restart service
-
-# sudo /etc/init.d/lightdm restart
-
-
-
-
-#vagrant box add "C:\Users\autouser\Desktop\Packer_Templates-master\Linux\Ubuntu\16.04\.box\virtualbox\ub-16.04.02-64x-whiskey-pod.box" --name 01
-
+#sleep 10 miu 
+echo "Sleeping 10 min for pictures"
+sleep 9m
+echo "Times almost up you better decide"
+sleep 30s
+echo "30 seconds left"
+sleep 30s
 
