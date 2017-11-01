@@ -28,17 +28,18 @@ echo "Install Nano"
 sudo apt-get update && sudo apt-get install -y nano
 
 #Installing Docker
-sudo apt-get update
-sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+echo "**********Install Docker**********"
+sudo apt-get update && sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update && sudo apt-get install -y docker-ce
+#Set docker as part of the user group   
+sudo usermod -aG docker ${OS_USERNAME}
 #Start and autostart the docker service
 sudo systemctl start docker
 sudo systemctl enable docker
-#Set docker as part of the user group   
-sudo usermod -aG docker ${OS_USERNAME}
+
 
 #set up 2nd network card
 echo "Enable 2nd network card for brdiged connections"

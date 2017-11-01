@@ -92,6 +92,11 @@ sudo apt-get update && sudo apt install htop
 echo "**********Install Nano**********"
 sudo apt-get update && sudo apt-get install -y nano
 
+#Install the wall paper ive chosen
+wget -O /tmp/wall_paper.zip https://github.com/zeab/wall-paper-favorites/archive/master.zip
+unzip /tmp/wall_paper.zip -d /tmp/wall_paper/
+sudo mv /tmp/wall_paper/wall-paper-favorites-master/* /usr/share/backgrounds
+
 #########
 #Instll variety
 echo "**********Install Variety**********"
@@ -107,25 +112,9 @@ sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable
 sudo apt-get update && sudo apt-get install -y google-chrome-stable
 
 
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "***********************Modifications Are Safe***************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "***********************Modifications Are Safe***************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-echo "************************************************************************"
-sleep 1m
+
+
+
 
 
 #Install dconf editor
@@ -154,29 +143,24 @@ chmod +x /usr/share/fly/fly
 
 echo "**********Install Kafka**********"
 #download kafka
-wget -O /tmp/kafka.tar.gz http://www-us.apache.org/dist/kafka/0.11.0.0/kafka_2.12-0.11.0.1.tgz
+#wget -O /tmp/kafka.tar.gz http://www-us.apache.org/dist/kafka/0.11.0.0/kafka_2.12-0.11.0.1.tgz
 #unzip from tmp to usr/share
-tar xfz /tmp/kafka.tar.gz -C /usr/share/
+#tar xfz /tmp/kafka.tar.gz -C /usr/share/
 #make new kafka dir
-mkdir /usr/share/kafka/
+#mkdir /usr/share/kafka/
 #move the interior unziped folder to new versionless kafka 
-mv /usr/share/kafka*/* /usr/share/kafka
+#mv /usr/share/kafka*/* /usr/share/kafka
 #remove the old folder
-rm -r /usr/share/kafka_2.12-0.11.0.1
+#rm -r /usr/share/kafka_2.12-0.11.0.1
 #give that folder excution rights
-sudo chmod -R +x /usr/share/kafka/bin
+#sudo chmod -R +x /usr/share/kafka/bin
 #add to paths
 #sudo echo "export PATH=$PATH:/usr/share/kafka/bin" >> /home/vagrant/.profile
+#sed -i 's,PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games",PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/share/fly:/usr/share/kafka/bin",g' /etc/environment
 
-sed -i 's,PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games",PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/share/fly:/usr/share/kafka/bin",g' /etc/environment
 
-
-##INSTALL JAVA8 from an install file rather than have the code here
-#sh /media/floppy0/install-java8.sh
-#########
 echo "**********Install OpenJDK 8**********"
 sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
-#########
 
 #Install IntelliJ
 #Install IntelliJ / Creates Launcher Icon / Add Auto Start on Login
@@ -209,33 +193,50 @@ printf '[Desktop Entry]\n Version=1.0\n Type=Application\n Name=IntelliJ IDEA Co
 #/home/vagrant/.IdeaIC2017.1/config/options
 #/home/vagrant/.IdeaIC2017.1/config/options
 
+#Install Atom
+echo "**********Install Atom**********"
+sudo add-apt-repository ppa:webupd8team/atom
+sudo apt update && sudo apt install -y atom
+#echo "**********Setting Atom as defualt text editor**********"
+#sudo xdg-mime default atom.desktop text/plain
+
+#Install VS Code
+echo "**********Install VS Code**********"
+#sudo -H -u ${OS_USERNAME} bash -c  'sudo snap install --classic vscode'
+wget -O /tmp/code.deb https://go.microsoft.com/fwlink/?LinkID=760868
+sudo dpkg -i /tmp/code.deb
+sudo apt-get update && sudo apt-get install code
+
+echo "Installing VS Code Extentions"
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension donjayamanne.python'
+sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension PeterJausovec.vscode-docker'
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension georgewfraser.vscode-javac'
+sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension DotJoshJohnson.xml'
+sudo xdg-mime default code.desktop text/plain
 
 #Installing Docker
-#########
 echo "**********Install Docker**********"
-#Installing Docker
-sudo apt-get update
-sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+sudo apt-get update && sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update && sudo apt-get install -y docker-ce
-sudo systemctl start docker
-sudo systemctl enable docker   
+#Set docker as part of the user group   
 sudo usermod -aG docker ${OS_USERNAME}
-#echo "Setting Docker so you dont have to sudo every time"
-#sudo usermod -aG docker ${OS_USERNAME}
-#########
+#Start and autostart the docker service
+sudo systemctl start docker
+sudo systemctl enable docker
+
 
 ####Enable Atom
 #wget -O /tmp/atom.deb https://github.com/atom/atom/releases/download/v1.19.0/atom-amd64.deb
 #sudo dpkg --install atom.deb
-echo "**********Install Atom**********"
-sudo apt update
-sudo add-apt-repository ppa:webupd8team/atom -y
-sudo apt update && sudo apt install -y atom
-echo "**********Setting Atom as defualt text editor**********"
-sudo xdg-mime default atom.desktop text/plain
+
+#sudo apt update
+#sudo add-apt-repository ppa:webupd8team/atom -y
+#sudo apt update && sudo apt install -y atom
+#echo "**********Setting Atom as defualt text editor**********"
+#sudo xdg-mime default atom.desktop text/plain
 
 #Visual Studio Code - Install
 #########
@@ -268,7 +269,7 @@ sudo xdg-mime default atom.desktop text/plain
 
 #Make it the defualt editor
 #echo "Updating VS Code to be the defualt text editor"
-#sudo xdg-mime default atom.desktop text/plain
+#sudo xdg-mime default code.desktop text/plain
 
 #enable python
 #rm /home/vagrant/.config/Code/User/settings.json
@@ -293,9 +294,7 @@ sudo printf '[Desktop Entry]\nName=VisualVM\nComment=All-in-One Java Troubleshoo
 #########
 #Download the kubectl
 echo "**********Instal Kubectl**********"
-sudo apt-get update
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-sudo apt-get update
 #make it executable and move it to /bin
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
@@ -320,7 +319,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 #Install Node.js (For Swagger Servers)
 #########
-echo "**********Instal Node.js**********"
+echo "**********Install Node.js**********"
 sudo apt-get update && sudo apt-get install -y nodejs npm
 #sudo apt-get update
 #curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
@@ -329,37 +328,11 @@ sudo apt-get update && sudo apt-get install -y nodejs npm
 
 
 #Install SBT (For Scala Builds)
-#########
-#echo "Installing SBT (All versions)"
-#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-0.13.15.deb
-#sudo dpkg -i sbt.deb
-#sudo apt-get update && sudo apt-get install sbt
-#rm /tmp/sbt.deb
+echo "**********Install Sbt**********"
+wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.3.deb
+sudo dpkg -i /tmp/sbt.deb
+sudo apt-get update && sudo apt-get install sbt
 
-#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-0.13.16.deb
-#sudo dpkg -i sbt.deb
-#sudo apt-get update && sudo apt-get install sbt
-#rm /tmp/sbt.deb
-
-#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.0.deb
-#sudo dpkg -i sbt.deb
-#sudo apt-get update && sudo apt-get install sbt
-#rm /tmp/sbt.deb
-
-#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.1.deb
-#sudo dpkg -i sbt.deb
-#sudo apt-get update && sudo apt-get install sbt
-#rm /tmp/sbt.deb
-
-#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.2.deb
-#sudo dpkg -i sbt.deb
-#sudo apt-get update && sudo apt-get install sbt
-#rm /tmp/sbt.deb
-
-#wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.3.deb
-#sudo dpkg -i sbt.deb
-#sudo apt-get update && sudo apt-get install sbt
-#rm /tmp/sbt.deb
 #echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
 #sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 #sudo apt-get update && sudo apt-get install -y sbt
@@ -374,7 +347,6 @@ echo "**********Install Sqlite**********"
 sudo apt-get update && sudo apt-get install -y sqlite3
 #########
 
-
 #Move the compiz profile to the desktop 
 echo "Getting Github floppy files"
 wget -O /tmp/floppy_files.zip https://github.com/zeab/Packer_Floppy_Files/archive/master.zip
@@ -382,11 +354,50 @@ unzip /tmp/floppy_files.zip -d /tmp/floppy_files/
 sudo mv /tmp/floppy_files/Packer_Floppy_Files-master/whiskey/unity.profile /home/vagrant/Desktop/unity.profile
 
 
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "**********Modifications Are Safe*****************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "**********Modifications Are Safe*****************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "**********Modifications Are Safe*****************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+echo "*************************************************"
+
+#Allow for some clean up and manual intervention at the end
+echo "Sleeping 10 min for pictures"
+sleep 5m
+echo "5 min left"
+sleep 4m
+echo "1 min left"
+sleep 30s
+echo "30 seconds left"
+sleep 15s
+echo "15 seconds left"
+sleep 15s
+
+
 #Set Desktop Icons
 echo "Setting Launcher Icons"
-#dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
-dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop', 'application://terminator.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://visualvm.desktop']"
-
+dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop', 'application://terminator.desktop' ,'application://firefox.desktop','application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://atom.desktop', 'application://code.desktop', 'application://visualvm.desktop']"
 
 #Sets the buttons on the right and correct widnows (So the ubuntu desktop people are dick's and decided everyone should have the buttons in the same place the same way so there is no option to change it)
 #dbus-launch gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'
@@ -438,20 +449,8 @@ dbus-launch gsettings set de.mh21.indicator-multiload.graphs.cpu enabled true
 dbus-launch gsettings set de.mh21.indicator-multiload.graphs.mem enabled true
 dbus-launch gsettings set de.mh21.indicator-multiload.graphs.net enabled true
 
-sudo apt update && sudo apt upgrade -y
+#sudo apt update && sudo apt upgrade -y
 
 #disable guest login
 sudo sh -c 'printf "[Seat:*]\nallow-guest=false\n" >/etc/lightdm/lightdm.conf.d/50-no-guest.conf'
-
-#Allow for some clean up and manual intervention at the end
-echo "Sleeping 10 min for pictures"
-sleep 5m
-echo "5 min left"
-sleep 4m
-echo "Times almost up you better decide"
-sleep 30s
-echo "30 seconds left"
-sleep 15s
-echo "15 seconds left"
-sleep 15s
 
