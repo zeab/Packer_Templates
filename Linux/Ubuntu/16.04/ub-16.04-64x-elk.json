@@ -4,7 +4,11 @@
 		"_comment": 								"General Settings",
 		"vm_version":									"1.0.0",
 		"vm_flavor":									"elk",
-		
-		"_comment": 								"Packer Settings",
-		"pack_headless": 								"false"
+				
+		"_comment":			 						"Build Settings",
+		"disk_size": 									"51200",
+				
+		"_comment": 								"Vagrant Settings",
+		"vgrtfile_template_path": 						"./vagrant_templates/",
+		"vgrtfile_template_file":						"vagrantfile-ub-16.04-64x-elk.tpl"
 }

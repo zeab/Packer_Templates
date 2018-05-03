@@ -9,7 +9,6 @@
 		
 		"_comment": 								"Packer Settings",
 		"pack_headless": 								"false",
-		"shutdown_command": 							"sudo -S shutdown -P now",
 		"post_shutdown_delay":	 						"1m",
 		
 		"_comment":			 						"Hypervisor Settings",
@@ -48,19 +47,13 @@
 		"_comment":					 				"OS Settings",
 		"os_username": 									"vagrant",
 		"os_password": 									"vagrant",
-		"install_desktop":								"false",
-		"install_updates":								"false",
+		"root_password": 								"vagrant",
 		
 		"_comment":			 						"OS Communication Settings",
 		"os_comm_type":									"ssh",
 		"os_comm_timeout":								"6h",
-		
-		"_comment": 								"Boot Commands/Settings",
-		"os_config_path":								"./os_config_files",
-		"os_config_file":								"preseed.cfg",
-		"floppy_files_path":							"./floppy_files",
-		"sftwre_install_script_path":					"./flavor",
-		"sftwre_install_file":							"install-software.sh",
+		"ssh_username": 								"root",
+
 
 		"_comment": 								"Vagrant Settings",
 		"configure_for_vagrant":						"true",
@@ -104,7 +97,7 @@
 		{
 			"type":                 					"virtualbox-iso",
 			"guest_os_type":        					"{{user `vbox_guest_os_type`}}",
-			"guest_additions_mode": 					"{{user `vbox_guest_additions_mode`}}",
+			"guest_additions_mode": 					"disable",
 	  
 			"disk_size":            					"{{user `disk_size`}}",
 			"vboxmanage": [
@@ -113,18 +106,11 @@
 														["modifyvm", "{{.Name}}", "--cpus",     	"{{user `cpus`}}"],
 														["modifyvm", "{{.Name}}", "--vram",     	"{{user `vram`}}"],
 														["modifyvm", "{{.Name}}", "--audio",     	"{{user `audio`}}"]
-				],
-			
-			"floppy_files": [
-														"{{user `os_config_path`}}/{{user `os_config_file`}}",
-														"{{user `floppy_files_path`}}/*.*",
-														"{{user `floppy_files_path`}}/installers/*.*",
-														"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/*.*"
-				],		
+				],	
 			
 			"headless":             					"{{user `pack_headless`}}",
-			"shutdown_command": 						"echo '{{ user `os_password` }}'|{{user `shutdown_command`}}",
-			"post_shutdown_delay" : 					"{{user `post_shutdown_delay`}}",
+			"shutdown_command": 						"poweroff",
+			"boot_wait": 								"60s",
 
 			"iso_urls": [
 														"{{ user `iso_alt_path` }}/{{ user `iso_name` }}",
@@ -134,92 +120,70 @@
 			"iso_checksum":         					"{{user `iso_checksum`}}",
 		
 			"communicator":			         			"{{user `os_comm_type`}}",
+			"ssh_username":			       				"{{user `ssh_username`}}",
 			"ssh_password": 			      			"{{user `os_username`}}",
-			"ssh_username":			       				"{{user `os_password`}}",
 			"ssh_wait_timeout": 			   			"{{user `os_comm_timeout`}}",
 			
+			"http_directory": 							".",
 			"boot_command": [
 														"root<enter><wait>",
-														"setup-alpine<enter><wait>",
-														"us<enter><wait>",
-														"us<enter><wait>",
-														"mineHostName<enter><wait>",
-														"<enter><wait>",
-														"<enter><wait>",
-														"<enter><wait>",
-														"no<enter><wait>",
-														"vagrant<enter><wait>",
-														"vagrant<enter><wait>",
-														"<enter><wait>",
-														"<enter><wait>",
-														"f<enter><wait>",
-														"<enter><wait>",
-														"<enter><wait>",
-														"sda<enter><wait>",
-														"sys<enter><wait>",
-														"y<enter><wait>",
-														"reboot<enter><wait>"
-														
+														"/sbin/setup-interfaces -i << EOF<enter>",
+														"auto lo<enter>",
+														"iface lo inet loopback<enter>",
+														"<enter>",
+														"auto eth0<enter>",
+														"iface eth0 inet dhcp<enter>",
+														"<tab>hostname localhost<enter>",
+														"EOF<enter>",
+														"/etc/init.d/networking --quiet start<enter><wait10><wait10>",
+														"wget -O /tmp/answers.txt http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers.txt<enter><wait>",
+														"setup-alpine -f /tmp/answers.txt<enter><wait>",
+														"{{user `root_password`}}<enter><wait>",
+														"{{user `root_password`}}<enter><wait>",
+														"<wait10><wait10><wait10><wait10><wait10><wait10>",
+														"<wait10><wait10><wait10><wait10><wait10><wait10>",
+														"y<enter>",
+														"<wait10><wait10><wait10><wait10><wait10><wait10>",
+														"<wait10><wait10><wait10><wait10><wait10><wait10>",
+														"<wait10><wait10><wait10><wait10><wait10><wait10>",
+														"wget -O /tmp/install.sh http://{{ .HTTPIP }}:{{ .HTTPPort }}/install.sh<enter><wait>",
+														"sh /tmp/install.sh<enter><wait>"		
 				]
 		}
 	],
 	"provisioners": [
 		{
-			"only": 									["virtualbox-iso"],
 			"type": 									"shell",
-			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-			"scripts": 									"{{user `floppy_files_path`}}/install-virtualbox-tools.sh",
-			"pause_before": 							"30s"	
+			"scripts": [
+														"../provisioners/vagrant.sh"
+			],
+			"environment_vars": [
+														"ROOT_PASSWORD={{user `root_password`}}",
+														"VAGRANT_USERNAME={{user `os_username`}}",
+														"VAGRANT_PASSWORD={{user `os_password`}}"
+			]
 		},
 		{
-			"type": 									"shell",
-			"environment_vars": [
-														"OS_USERNAME={{user `os_username`}}",
-														"OS_PASSWORD={{user `os_password`}}",
-														"INSTALL_DESKTOP={{user `install_desktop`}}"
-				],
-			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-			"scripts": [
-														"{{user `floppy_files_path`}}/install-desktop.sh",
-														"{{user `floppy_files_path`}}/reboot.sh"
-				],
-			"pause_before": 							"30s"	
+		  "type": 										"shell",
+		  "start_retry_timeout": 						"5m",
+		  "scripts": [
+														"../provisioners/disk_cleanup.sh"
+		  ]
 		},
 		{
-			"type": 									"shell",
-			"environment_vars": [
-														"OS_USERNAME={{user `os_username`}}",
-														"OS_PASSWORD={{user `os_password`}}"
-				],
-			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-			"scripts": [
-														"{{user `sftwre_install_script_path`}}/{{user `vm_flavor`}}/{{user `sftwre_install_file`}}",
-														"{{user `floppy_files_path`}}/reboot.sh"
-				],
-			"pause_before": 							"30s"	
-		},
-		{
-			"type": 									"shell",
-			"environment_vars": [
-														"OS_USERNAME={{user `os_username`}}",
-														"OS_PASSWORD={{user `os_password`}}",
-														"CONFIGURE_FOR_VAGRANT={{user `configure_for_vagrant`}}"
-				],
-			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-			"scripts": [
-														"{{user `floppy_files_path`}}/configure-for-vagrant.sh",
-														"{{user `floppy_files_path`}}/finalize-compact.sh"
-				],
-			"pause_before": 							"30s"	
-		}
-		
+		  "type": 										"shell",
+		  "scripts": [
+														"../provisioners/cleanup.sh"
+		  ]
+		}		
 	],
 	"post-processors": [
 		{
 			"type": 									"vagrant",
+			"compression_level": 						9,
 			"keep_input_artifact": 						false,
 			"output": 									"{{user `vgrt_output_path`}}/{{.Provider}}/{{user `vm_name`}}-{{user `vm_flavor`}}.box",
-			"vagrantfile_template": 					"{{user `vgrtfile_template_path`}}{{user `vgrtfile_template_file`}}"	
+			"vagrantfile_template": 					"../vagrantfiles/Vagrantfile.Alpine"
 		}
 	]
 }

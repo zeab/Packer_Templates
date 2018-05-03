@@ -1,0 +1,17 @@
+{	
+	"_comment": "Build with `packer build -var-file='ub-16.04-64x-torrent.json' ub-16.04-64x-base.json`",
+	
+		"_comment": 								"General Settings",
+		"vm_version":									"1.0.1",
+		"vm_flavor":									"torrent",
+    
+    "_comment":					 				"OS Settings",
+		"install_desktop":						"true",
+		
+		"_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"102400",
+				
+		"_comment": 								"Vagrant Settings",
+		"vgrtfile_template_path": 		"./vagrant_templates/",
+		"vgrtfile_template_file":			"vagrantfile-ub-16.04-64x-torrent.tpl"
+}

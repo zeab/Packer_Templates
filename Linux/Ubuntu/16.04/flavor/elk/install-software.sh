@@ -2,7 +2,7 @@
 
 #Define the user name to be used
 OS_USERNAME=${OS_USERNAME:-vagrant}
-ELK_VERSION=${ELK_VERSION:-5.6.3}
+ELK_VERSION=${ELK_VERSION:-6.2.3}
 
 #REMOVE SOFTWARE
 #telnet since why would we need that?
@@ -114,8 +114,6 @@ sudo systemctl enable kibana
 
 
 
-
-
 curl -H 'Content-Type: application/json' -XPOST 'http://127.0.0.1:8900' -d '{"message":"inital log message"}'
 #sudo service filebeat start
 #sudo systemctl enable filebeat
@@ -137,12 +135,20 @@ curl -H 'Content-Type: application/json' -XPOST 'http://127.0.0.1:8900' -d '{"me
 #sudo service packetbeat start
 #sudo systemctl enable packetbeat
 
-
-
-
-
 #set up 2nd network card
 printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
 
 #final updates
 sudo apt update && sudo apt upgrade -y
+
+#Install Firewall
+echo "Install Firewall"
+sudo apt-get install -y ufw 
+echo "Open ssh firewall"
+sudo ufw allow ssh
+sudo ufw allow 8900/tcp
+sudo ufw allow 5043/tcp
+sudo ufw allow 9200/tcp
+sudo ufw allow 5601/tcp
+echo "y" | sudo ufw enable
+

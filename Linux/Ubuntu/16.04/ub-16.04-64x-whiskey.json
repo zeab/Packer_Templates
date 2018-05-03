@@ -3,18 +3,18 @@
 	
 		"_comment": 								"General Settings",
 		"vm_version":									"1.0.0",
-		"vm_flavor":									"whiskey-pod",
+		"vm_flavor":									"whiskey",
 		
 		"_comment": 								"Packer Settings",
-		"pack_headless": 								"false",
+		"pack_headless": 							"false",
 		
 		"_comment":					 				"OS Settings",
-		"install_desktop":								"true",
+		"install_desktop":						"true",
 		
 		"_comment":			 						"Hypervisor Settings",
-		"disk_size": 									"25600",
+		"disk_size": 									"51200",
 		
 		"_comment": 								"Vagrant Settings",
-		"vgrtfile_template_path": 						"./vagrant_templates/",
-		"vgrtfile_template_file":						"vagrantfile-ub-16.04.02-64x-whiskey-pod.tpl"
+		"vgrtfile_template_path": 	  "./vagrant_templates/",
+		"vgrtfile_template_file":			"vagrantfile-ub-16.04-64x-whiskey.tpl"
 }

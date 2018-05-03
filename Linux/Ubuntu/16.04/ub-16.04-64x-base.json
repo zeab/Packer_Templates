@@ -8,14 +8,14 @@
 		"vm_flavor":									"base",
 		
 		"_comment": 								"Packer Settings",
-		"pack_headless": 								"false",
+		"pack_headless": 								"true",
 		"shutdown_command": 							"sudo -S shutdown -P now",
 		"post_shutdown_delay":	 						"1m",
 		
-		"_comment":			 						"Hypervisor Settings",
+		"_comment":			 						"Build Settings",
 		"disk_size": 									"15360",
 		"cpus": 										"2",
-		"memory": 										"2048",
+		"memory": 										"1024",
 		"vram":											"64",
 		"nictype1":										"virtio",
 		"audio":										"none",
@@ -66,8 +66,8 @@
 		"configure_for_vagrant":						"true",
 		"vgrt_output_path":								"./.box",
 		"vgrt_compression":								"",
-		"vgrtfile_template_path": 						"",
-		"vgrtfile_template_file":						"",
+		"vgrtfile_template_path": 						"./vagrant_templates/",
+		"vgrtfile_template_file":						"vagrantfile-ub-16.04-64x-base.tpl",
 		
 		"_comment": 								"Atlas Settings",
 		"atlas_token":									"",
@@ -158,13 +158,6 @@
 	],
 	"provisioners": [
 		{
-			"only": 									["virtualbox-iso"],
-			"type": 									"shell",
-			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-			"scripts": 									"{{user `floppy_files_path`}}/install-virtualbox-tools.sh",
-			"pause_before": 							"30s"	
-		},
-		{
 			"type": 									"shell",
 			"environment_vars": [
 														"OS_USERNAME={{user `os_username`}}",
@@ -176,6 +169,13 @@
 														"{{user `floppy_files_path`}}/install-desktop.sh",
 														"{{user `floppy_files_path`}}/reboot.sh"
 				],
+			"pause_before": 							"30s"	
+		},
+		{
+			"only": 									["virtualbox-iso"],
+			"type": 									"shell",
+			"execute_command": 							"echo '{{ user `os_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+			"scripts": 									"{{user `floppy_files_path`}}/install-virtualbox-tools.sh",
 			"pause_before": 							"30s"	
 		},
 		{

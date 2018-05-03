@@ -5,6 +5,10 @@
 		"vm_version":									"1.0.0",
 		"vm_flavor":									"subsonic",
 		
-		"_comment": 								"Packer Settings",
-		"pack_headless": 								"false"
+		"_comment":			 						"Build Settings",
+		"disk_size": 									"15360",
+		
+		"_comment": 								"Vagrant Settings",
+		"vgrtfile_template_path": 						"./vagrant_templates/",
+		"vgrtfile_template_file":						"vagrantfile-ub-16.04-64x-subsonic.tpl"
 }

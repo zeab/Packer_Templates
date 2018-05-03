@@ -1,0 +1,13 @@
+{	
+	"_comment": "Build with `packer build -var-file='ub-16.04-64x-cassandra.json' ub-16.04-64x-base.json`",
+	
+		"_comment": 								"General Settings",
+		"vm_version":									"1.0.0",
+		"vm_flavor":									"cassandra",
+    
+    "_comment":			 						"Hypervisor Settings",
+		"disk_size": 									"51200",
+		
+		"_comment": 								"Packer Settings",
+		"pack_headless": 								"false"
+}
