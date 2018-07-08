@@ -215,7 +215,7 @@ sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
 #Install IntelliJ
 #########
 echo "**********Install IntelliJ**********"
-wget -O /tmp/intellij.tar.gz https://download.jetbrains.com/idea/ideaIC-2017.2.6.tar.gz &&
+wget -O /tmp/intellij.tar.gz https://download.jetbrains.com/idea/ideaIC-2018.1.5.tar.gz &&
 mkdir /tmp/intellij/ &&
 tar xfz /tmp/intellij.tar.gz -C /tmp/intellij/ &&
 mkdir /usr/share/intellij/ &&
@@ -249,8 +249,8 @@ printf "\nexport PATH=\$PATH:/home/vagrant/go/bin" >> /home/vagrant/.profile
 #Install Atom
 #########
 echo "**********Install Atom**********"
-sudo add-apt-repository ppa:webupd8team/atom
-sudo apt update && sudo apt install -y atom
+#sudo add-apt-repository ppa:webupd8team/atom
+#sudo apt update && sudo apt install -y atom
 
 #sudo apm install go-debug
 #sudo apm install go-plus
@@ -275,9 +275,9 @@ sudo dpkg -i /tmp/code.deb
 sudo apt-get update && sudo apt-get install code
 echo "Installing VS Code Extentions"
 #sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension donjayamanne.python'
-sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension PeterJausovec.vscode-docker'
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension PeterJausovec.vscode-docker'
 #sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension georgewfraser.vscode-javac'
-sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension DotJoshJohnson.xml'
+#sudo -H -u ${OS_USERNAME} bash -c 'code --install-extension DotJoshJohnson.xml'
 sudo xdg-mime default code.desktop text/plain
 #########
 
@@ -299,7 +299,7 @@ sudo systemctl enable docker
 #VisualVM
 #########
 echo "**********Install VisualVM**********"
-wget -O /tmp/visualvm.zip https://github.com/visualvm/visualvm.src/releases/download/1.3.9/visualvm_139.zip
+wget -O /tmp/visualvm.zip https://github.com/visualvm/visualvm.src/releases/download/1.4.1/visualvm_141.zip
 mkdir /tmp/visualvm/
 unzip /tmp/visualvm.zip -d /tmp/visualvm/
 sudo mkdir /usr/share/visualvm/
@@ -346,7 +346,7 @@ sudo apt-get install -y build-essential
 #Install SBT
 #########
 echo "**********Install Sbt**********"
-wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.0.4.deb
+wget -O /tmp/sbt.deb http://dl.bintray.com/sbt/debian/sbt-1.1.6.deb
 sudo dpkg -i /tmp/sbt.deb
 sudo apt-get update && sudo apt-get install sbt
 sudo -H -u ${OS_USERNAME} bash -c 'sbt compile'
