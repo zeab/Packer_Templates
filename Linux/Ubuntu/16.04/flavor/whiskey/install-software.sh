@@ -149,12 +149,12 @@ sudo apt-get update && sudo apt-get install -y google-chrome-stable
 
 #Install Postman
 #########
-echo "**********Instal Postman**********"
-wget -O /tmp/postman.tar.gz https://dl.pstmn.io/download/latest/linux64 
-sudo tar -xzf /tmp/postman.tar.gz -C /opt
-sudo ln -s /opt/Postman/Postman /usr/bin/postman
-printf '[Desktop Entry]\nEncoding=UTF-8\nName=Postman\nComment=Http Rest Client\nIcon=variety\nExec=postman\nIcon=/opt/Postman/resources/app/assets/icon.png\nTerminal=false\nType=Application\nCategories=Development' > '/tmp/postman.desktop'
-sudo mv /tmp/postman.desktop /usr/share/applications/
+#echo "**********Instal Postman**********"
+#wget -O /tmp/postman.tar.gz https://dl.pstmn.io/download/latest/linux64 
+#sudo tar -xzf /tmp/postman.tar.gz -C /opt
+#sudo ln -s /opt/Postman/Postman /usr/bin/postman
+#printf '[Desktop Entry]\nEncoding=UTF-8\nName=Postman\nComment=Http Rest Client\nIcon=variety\nExec=postman\nIcon=/opt/Postman/resources/app/assets/icon.png\nTerminal=false\nType=Application\nCategories=Development' > '/tmp/postman.desktop'
+#sudo mv /tmp/postman.desktop /usr/share/applications/
 #########
 
 #Install dconf editor
@@ -405,11 +405,13 @@ sleep 15s
 echo "15 seconds left"
 sleep 15s
 
+#Final update and upgrade
+sudo apt update && sudo apt upgrade -y
 
 #Set Desktop Icons
 echo "Setting Launcher Icons"
-dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop', 'application://terminator.desktop', 'application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://code.desktop', 'application://visualvm.desktop', 'application://postman.desktop']"
-#'application://atom.desktop', 'application://firefox.desktop'
+dbus-launch gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://org.gnome.Nautilus.desktop', 'application://terminator.desktop', 'application://google-chrome.desktop', 'application://jetbrains-idea.ce.desktop', 'application://code.desktop', 'application://visualvm.desktop']"
+#'application://atom.desktop', 'application://firefox.desktop' , 'application://postman.desktop'
 
 #Sets the buttons on the right and correct widnows (So the ubuntu desktop people are dick's and decided everyone should have the buttons in the same place the same way so there is no option to change it)
 #dbus-launch gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close'
@@ -463,9 +465,6 @@ dbus-launch gsettings set de.mh21.indicator-multiload.graphs.net enabled true
 #set up 2nd network card
 echo "Enable 2nd network card for brdiged connections"
 printf "\nauto enp0s8\niface enp0s8 inet dhcp" >> /etc/network/interfaces
-
-#Final update and upgrade
-sudo apt update && sudo apt upgrade -y
 
 #disable guest login
 sudo sh -c 'printf "[Seat:*]\nallow-guest=false\n" >/etc/lightdm/lightdm.conf.d/50-no-guest.conf'
