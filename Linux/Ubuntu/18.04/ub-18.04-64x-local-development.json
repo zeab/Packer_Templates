@@ -6,7 +6,7 @@
 		"vm_flavor":									"local-development",
 		
 		"_comment": 								"Packer Settings",
-		"pack_headless": 								"false",
+		"pack_headless": 								"true",
 		
 		"_comment": 								"Vagrant Settings",
 		"vgrtfile_template_path": 						"./vagrant_templates/",
