@@ -1,0 +1,8 @@
+{	
+	"_comment": "Build with `packer build -var-file='ub-18.04-64x-whiskey.json' ub-18.04-64x-base.json`",
+	
+		"_comment": 								"General Settings",
+		"install_desktop": 								"yes",
+		"install_software": 							"whiskey",
+		"vagrantfile_template": 						"./vagrant_templates/vagrantfile-ub-18.04-64x-whiskey.tpl"
+}
